@@ -3,12 +3,12 @@ This is not an officially supported Google product.
 This code creates PoC demo environment for CSA Network Firewall microsegmentation. This demo code is not built for production workload. 
 ```
 
-# Demo Guide
+# CSA Guide
 This Cloud Security Architecture uses terraform to setup Firewall Micro-segmentation demo in a project and underlying infrastructure using Google Cloud Services like [Resource Manager - IAM Tags](https://cloud.google.com/resource-manager), [Cloud Firewall](https://cloud.google.com/firewall), [Cloud Armor](https://cloud.google.com/armor), [Cloud Compute Engine](https://cloud.google.com/compute) and [Cloud Logging](https://cloud.google.com/logging).
 
 
-## Demo Architecture Diagram
-The image below describes the architecture of CSA Firewall Micro-segmentation demo to protect against DDoS attack.
+## CSA Architecture Diagram
+The image below describes the architecture of CSA Firewall Micro-segmentation.
 
 ![Architecture Diagram](./fw-microseg-arch.png)
 
@@ -37,7 +37,7 @@ Follow the steps in [this guide](https://cloud.google.com/resource-manager/docs/
 Clone this github repository go to the root of the repository.
 
 ``` 
-git clone http://github.com/mgaur10/csa-fw-microsegmentation
+git clone http://github.com/googlecloudplatform/csa-fw-microsegmentation
 cd csa-fw-microsegmentation
 ```
 
