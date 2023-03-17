@@ -138,47 +138,6 @@ resource "google_compute_network_firewall_policy_rule" "allow_iap" {
 
 
 
-# Allow access from Global Load Balancer
-resource "google_compute_network_firewall_policy_rule" "allow_glb" {
-  project         = var.microseg_project_id
-  action          = "allow"
-  description     = "Allow access from Global load balancer"
-  direction       = "INGRESS"
-  disabled        = false
-  enable_logging  = true
-  firewall_policy = google_compute_network_firewall_policy.primary.name
-  priority        = 12000
-  rule_name       = "allow-glb-access to presentation layer"
-  #  target_service_accounts = ["emailAddress:my@service-account.com"]
-
-  target_secure_tags {
-    name = "tagValues/${google_tags_tag_value.pri_ppl_value.name}"
-  }
-
-
-  target_secure_tags {
-    name = "tagValues/${google_tags_tag_value.sec_ppl_value.name}"
-  }
-
-
-  match {
-    src_ip_ranges = ["${google_compute_global_address.glb_pplapp_presentation_address.address}"]
-
-    layer4_configs {
-      ip_protocol = "tcp"
-      ports       = [80]
-    }
-  }
-  depends_on = [
-    google_compute_network_firewall_policy.primary,
-    google_tags_tag_value.pri_ppl_value,
-    google_tags_tag_value.pri_mdwl_value,
-    google_tags_tag_value.sec_ppl_value,
-    google_tags_tag_value.sec_mdwl_value,
-    google_compute_network_firewall_policy_association.primary,
-    google_compute_global_address.glb_pplapp_presentation_address,
-  ]
-}
 
 
 # Allow access from Internal Load Balancer
@@ -304,7 +263,7 @@ resource "google_compute_network_firewall_policy_rule" "sec_allow_http_lb_proxy"
 resource "google_compute_network_firewall_policy_rule" "allow_fwpol_microseg_db1" {
   project         = var.microseg_project_id
   action          = "allow"
-  description     = "Rule to allow VMs access to Private Google APIs1"
+  description     = "Rule to allow access from middleware to database"
   direction       = "EGRESS"
   disabled        = false
   enable_logging  = true
