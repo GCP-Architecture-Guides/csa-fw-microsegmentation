@@ -54,27 +54,27 @@ A Web Application Firewall (WAF) implementation is included to demonstrate how w
 
 1. Sign in to your organization and assign yourself the following roles:
 
-1. Policy Tag Admin role at organization level
-1. Editor role on the project to be used for the deployment. 
-1. The terraform assigns Storage Object Viewer role to the SQL database service account at project level.
+- Policy Tag Admin role at organization level
+- Editor role on the project to be used for the deployment. 
+- The terraform assigns Storage Object Viewer role to the SQL database service account at project level.
 
 The following steps should be executed in Cloud Shell in the Google Cloud Console.
 
 1. Optional step: If a new project needs to be created and enable billing. Follow the steps in this [guide](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
 
-1. Open up Cloud shell and clone the [git repository](https://github.com/GoogleCloudPlatform/csa-fw-microsegmentation) using the command below.
+2. Open up Cloud shell and clone the [git repository](https://github.com/GoogleCloudPlatform/csa-fw-microsegmentation) using the command below.
 
 ```
 git clone https://github.com/GCP-Architecture-Guides/csa-fw-microsegmentation.git
 ```
 
-1. Navigate to the csa-fw-microsegmentation folder.
+3. Navigate to the csa-fw-microsegmentation folder.
 
 ```
 cd csa-fw-microsegmentation
 ```
 
-1. Provide the organization id (for IAM resource manager tags) and project id to deploy the architecture resources in the terraform variables.
+4. Provide the organization id (for IAM resource manager tags) and project id to deploy the architecture resources in the terraform variables.
 
 ```
 export TF_VAR_organization_id=[YOUR_ORGANIZATION_ID]
@@ -82,13 +82,13 @@ export TF_VAR_organization_id=[YOUR_ORGANIZATION_ID]
 export TF_VAR_microseg_project_id=[YOUR_PROJECT_ID]
 ```
 
-1. To find your organization id, run the following command.
+5. To find your organization id, run the following command.
 
 ```
 gcloud projects get-ancestors [YOUR_PROJECT_ID]
 ```
 
-1. While in the csa-fw-microsegmentation, run the commands below in order. 
+6. While in the csa-fw-microsegmentation, run the commands below in order. 
 
 ```
 terraform init
@@ -100,7 +100,7 @@ terraform apply
 
 > If prompted, authorize the API call.
 
-    1. If you get an error message "Error: Provider produced inconsistent final plan", then re-run the "`terraform apply`" command to complete the deployment. This is a known Terraform bug.
+    If you get an error message "Error: Provider produced inconsistent final plan", then re-run the "`terraform apply`" command to complete the deployment. This is a known Terraform bug.
 
 ```
 terraform apply
@@ -108,7 +108,7 @@ terraform apply
 
 Note: All the other variables are given a default value. If you wish to change, update the corresponding variables in the variable.tf file.
 
-1. To clean-up and destroy all the created resources run the following command from the root folder of this repo.
+7. To clean-up and destroy all the created resources run the following command from the root folder of this repo.
 
 ```
 terraform destroy
@@ -133,7 +133,7 @@ This tagging structure could change, depending on various factors within the tar
 
 ## Logging
 
-Logging is extremely useful for monitoring, auditing activities, and troubleshooting when things go wrong. We can log network traffic at the firewall layer, the VPC layer, and the load balancer layer. Cloud Armor logs are included in the load balancer log data. Log data can be viewed within [Logs Explorer](https://console.cloud.google.com/logs/query?_ga=2.171861989.416452064.1675190053-576523331.1675093379) in the GCP console.
+Logging is extremely useful for monitoring, auditing activities, and troubleshooting when things go wrong. We can log network traffic at the firewall layer, the VPC layer, and the load balancer layer. Cloud Armor logs are included in the load balancer log data. Log data can be viewed within [Logs Explorer](https://console.cloud.google.com/logs/) in the GCP console.
 
 To view firewall logs, use the following query (_replace PROJECT_ID with your ID_):
 
@@ -185,6 +185,7 @@ Monitoring dashboards also have a Logs Panel type. We can use it to display fire
 Cloud Armor information can also be monitored, to get a sense of incoming threats. For example, we can use a dashboard to monitor the number of rule blocks and provide a view into its deny logs.
 
 ![image](./images/csa-networkfir--3653704ioua.png)
+
 
 ![image](./images/csa-networkfir--8z561h7ud7h.png)
 
