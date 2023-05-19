@@ -19,7 +19,7 @@ The system we will be building is a 3-Tier application with Presentation, Middle
 
 A sample deployment is available here: [http://34.120.121.132](http://34.120.121.132)   [To be removed when released]
 
-![image](/images/csa-networkfir--4tklnbzbeue.png)
+![image](./images/csa-networkfir--4tklnbzbeue.png)
 
 ## Product and services
 
