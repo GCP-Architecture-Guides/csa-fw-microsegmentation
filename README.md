@@ -230,7 +230,7 @@ To Add: **Tag User vs tag administrator vs compute admin for separation of roles
 
 # Cost
 
-Please see the estimated monthly cost to run this demonstration environment, below. Note, this has been estimated at the time of pattern creation, theThe cost estimate may change with time and may vary per region, please review the cost of each resource at [Google Cloud Pricing Calculator](https://cloud.google.com/products/calculator).
+Please see the estimated monthly cost to run this demonstration environment, below. Note, this has been estimated at the time of pattern creation, the estimate may change with time and may vary per region, please review the cost of each resource at [Google Cloud Pricing Calculator](https://cloud.google.com/products/calculator).
 
 <table>
   <thead>
