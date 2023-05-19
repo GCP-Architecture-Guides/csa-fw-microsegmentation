@@ -9,6 +9,7 @@ This code creates PoC demo environment for CSA Network Firewall microsegmentatio
 
 Network Firewall microsegmentation is a method used to apply the concept of least privilege to network elements in the cloud. It has the benefit of reducing the threat surface to only what is necessary for valid system functions, and can reduce lateral movement risk in the case of a breach. This architecture applies the microsegmentation concept to sources, destinations, protocols, and ports within the Google Cloud environment.
 
+
 # Architecture 
 
 A microsegmented cloud network begins by explicitly denying all communications ingress to and egress from all network elements. Building on this, we create a granular, positive security model which only allows required traffic flows.
@@ -35,6 +36,7 @@ This architecture pattern leverages the following Google Cloud products:
 -  [Secret Manager](https://cloud.google.com/secret-manager)
 -  [Cloud NAT](https://cloud.google.com/nat)
 
+
 ## Design considerations
 
 The purpose of this architecture pattern is to demonstrate a least privileged, microsegmented network environment for an example 3-tier system. It does not aim to demonstrate other security concepts, such as encryption, principle of IAM roles least privilege, secure coding, database security, etc. This pattern does include an example Cloud Armor policy for consideration.
@@ -44,6 +46,7 @@ Components within this system are isolated from each other using Network Firewal
 While we aim to keep all of our VM resources private, there are cases that arise where Internet access may be required. For example, a system may need to install a package, obtain a patch, or call home to a cloud monitoring service via the Internet. It can be difficult to determine which IP addresses are needed in firewall rule to support this, as IPs in a cloud-centric work are ever-changing. To avoid allowing outbound to large IP address ranges or even all IPs, we will demonstrate the use of Fully Qualified Domain Name (FQDN) firewall rule to restrict access. This is used by the Middleware layer upon startup to install the PHP Google Cloud Client Library for Secret Manager. The Cloud NAT service is restricted so that only the Middleware VMs can use it.
 
 A Web Application Firewall (WAF) implementation is included to demonstrate how we can leverage a signature-based policy to protect our web app. This example deploys the ModSecurity Core Rule Set at Sensitivity (Paranoia) Level 3.
+
 
 # Deployment
 
@@ -125,6 +128,7 @@ As a practical example, consider the following key:value for the SAP Workday dat
 
 This tagging structure could change, depending on various factors within the target environment. For example, perhaps the business unit is known via the folder name, the same rules are to be applied to system components in all locations, or there are not multiple subsystem components.
 
+
 # Operations
 
 ## Logging
@@ -167,6 +171,7 @@ jsonPayload.enforcedSecurityPolicy.name="armor-microseg"
 
 The Cloud Armor logs contain important information on which client IPs are accessing our resources, what they are accessing, and the security outcome of Cloud Armor's analysis. For example, the logs will show a POST request from a client IP to a particular URL that has been denied due to a WAF signature in blocking mode. More details are available on the [Request Logging](https://cloud.google.com/armor/docs/request-logging) page.
 
+
 ## Monitoring, Alerting, and Reporting
 
 One way to monitor a microsegmented environment is to look at the number of firewall denies. An unusual amount of firewall denies to or from particular resources could indicate a compromise attempt. It could also indicate a misconfiguration. In the screenshot below, you can see a chart showing egress denies, focusing in on the data for a particular VM.
@@ -183,23 +188,16 @@ Cloud Armor information can also be monitored, to get a sense of incoming threat
 
 ![image](./images/csa-networkfir--8z561h7ud7h.png)
 
-An example Monitoring Dashboard can be loaded into your environment, by uploading [this YAML file](https://drive.google.com/file/d/1xQjk_khDPKCYAc5pf3Evj-3Aq_Nnn3sN/view?usp=share_link) to your Cloud Shell and executing the following command within your desired project:
+An example Monitoring Dashboard can be loaded into your environment, by uploading [this YAML file](https://github.com/GCP-Architecture-Guides/csa-fw-microsegmentation/blob/main/images/dash.yaml) to your Cloud Shell and executing the following command within your desired project:
 
-<table>
-  <thead>
-    <tr>
-      <th><p><pre>
+```
 gcloud monitoring dashboards create --config-from-file dash.yaml
-</pre></p></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+```
 
 The dashboard with look like this:
 
 ![image](./images/csa-networkfir--3hbx1e6gi18.png)
+
 
 ## Digital Forensic and Incident Response
 
@@ -211,10 +209,11 @@ In the case that a VM needs to be quarantined, it can be tagged accordingly. To 
 
 - Navigate to Compute Engine -> VM Instances
 - Click on the name of the instance you wish to quarantine.
-- Under ‘Basic Information', click the edit     ![image](csa-networkfir--tslmk06pdck.png) button in the ‘Tags' row.
+- Under ‘Basic Information', click the edit  ![image](./images/csa-networkfir--tslmk06pdck.png) button in the ‘Tags' row.
 - Click Add Tag. Select the value ‘quarantine' under the existing key ‘hr_pplapp'.
 
 At this point the VMs tagged with key/value "hr_pplapp:quarantine" are isolated from the rest of the VPC or any egress traffic. Script and/or automate the above configuration in your incident playbooks to quarantine the VMs, then connect your Digital Forensics and Incident Response (DFIR)  tools for investigation.
+
 
 # Governance, Risk Management, and Compliance
 
@@ -281,6 +280,7 @@ Please see the estimated monthly cost to run this demonstration environment, bel
   </tbody>
 </table>
 
+
 # Related Resources
 
 [Network Firewall Policies](https://cloud.google.com/vpc/docs/network-firewall-policies): This documentation describes the network firewall features and differentiates them from VPC firewall rules.
@@ -288,7 +288,4 @@ Please see the estimated monthly cost to run this demonstration environment, bel
 [Tags for Firewalls](https://cloud.google.com/vpc/docs/tags-firewalls-overview): This documentation provides details about tags as they relate to use with network firewalls.
 
 [Cloud Armor Overview](https://cloud.google.com/armor/docs/cloud-armor-overview): This documentation describes the Cloud Armor product and how to configure its many features. While this guide demonstrates a WAF implementation, Cloud Armor provides many more rich features that can be explored like Threat Intelligence, rate limiting, custom rules, and reCAPTCHA integration.
-
-
-
 
