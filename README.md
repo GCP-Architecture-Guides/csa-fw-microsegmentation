@@ -62,133 +62,56 @@ The following steps should be executed in Cloud Shell in the Google Cloud Consol
 
 1. Open up Cloud shell and clone the [git repository](https://github.com/GoogleCloudPlatform/csa-fw-microsegmentation) using the command below.
 
-<table>
-  <thead>
-    <tr>
-      <th><p><pre>
+```
 git clone https://github.com/GCP-Architecture-Guides/csa-fw-microsegmentation.git
-</pre></p></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+```
 
 1. Navigate to the csa-fw-microsegmentation folder.
 
-<table>
-  <thead>
-    <tr>
-      <th><p><pre>
+```
 cd csa-fw-microsegmentation
-</pre></p></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+```
 
 1. Provide the organization id (for IAM resource manager tags) and project id to deploy the architecture resources in the terraform variables.
 
-<table>
-  <thead>
-    <tr>
-      <th><p><pre>
+```
 export TF_VAR_organization_id=[YOUR_ORGANIZATION_ID]
-</pre></p>
 
-<p><pre>
 export TF_VAR_microseg_project_id=[YOUR_PROJECT_ID]
-</pre></p></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+```
 
 1. To find your organization id, run the following command.
 
-<table>
-  <thead>
-    <tr>
-      <th><p><pre>
+```
 gcloud projects get-ancestors [YOUR_PROJECT_ID]
-</pre></p></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+```
 
 1. While in the csa-fw-microsegmentation, run the commands below in order. 
 
-<table>
-  <thead>
-    <tr>
-      <th><p><pre>
+```
 terraform init
-</pre></p></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
 
-<table>
-  <thead>
-    <tr>
-      <th><p><pre>
 terraform plan
-</pre></p></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
 
-<table>
-  <thead>
-    <tr>
-      <th><p><pre>
+
 terraform apply
-</pre></p></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+```
 
 > If prompted, authorize the API call.
 
     1. If you get an error message "Error: Provider produced inconsistent final plan", then re-run the "`terraform apply`" command to complete the deployment. This is a known Terraform bug.
 
-<table>
-  <thead>
-    <tr>
-      <th><p><pre>
+```
 terraform apply
-</pre></p></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+```
 
 Note: All the other variables are given a default value. If you wish to change, update the corresponding variables in the variable.tf file.
 
 1. To clean-up and destroy all the created resources run the following command from the root folder of this repo.
 
-<table>
-  <thead>
-    <tr>
-      <th><p><pre>
+```
 terraform destroy
-</pre></p></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+```
 
 # Best Practices
 
@@ -264,17 +187,9 @@ Cloud Armor information can also be monitored, to get a sense of incoming threat
 
 An example Monitoring Dashboard can be loaded into your environment, by uploading [this YAML file](https://drive.google.com/file/d/1xQjk_khDPKCYAc5pf3Evj-3Aq_Nnn3sN/view?usp=share_link) to your Cloud Shell and executing the following command within your desired project:
 
-<table>
-  <thead>
-    <tr>
-      <th><p><pre>
+```
 gcloud monitoring dashboards create --config-from-file dash.yaml
-</pre></p></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+```
 
 The dashboard with look like this:
 
