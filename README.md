@@ -17,7 +17,6 @@ A microsegmented cloud network begins by explicitly denying all communications i
 
 The system we will be building is a 3-Tier application with Presentation, Middleware, and Database layers. For naming purposes, we will call this system the HR People App. It currently hosts the names of famous characters, and performances that they have been part of. The Presentation Layer pulls data from the Middleware Layer using a REST API call. The Middleware Layer pulls data from Cloud SQL using a database query.
 
-A sample deployment is available here: [http://34.120.121.132](http://34.120.121.132)   [To be removed when released]
 
 ![image](./images/csa-networkfir--4tklnbzbeue.png)
 
@@ -204,21 +203,16 @@ The dashboard with look like this:
 
 ## Digital Forensic and Incident Response
 
-      This section was reviewed by Mandiant's Incident Remediation team.
-
 In the case that a VM is suspected or known to be compromised, an organization may wish to quarantine it. This is a simple task using firewall rules. In this guide, we prepopulated the ‘hr_pplapp' tag key with the value ‘quarantine'. We also built high priority firewall rules that deny IPv4 and IPv6 traffic in and out of VMs tagged with ‘hr_pplapp:quarantine'. Here is what these rules look like in the GUI:
 
 ![image](./images/csa-networkfir--au251kuc2ks.png)
 
 In the case that a VM needs to be quarantined, it can be tagged accordingly. To do this in the GUI:
 
-1. Navigate to Compute Engine -> VM Instances
-1. Click on the name of the instance you wish to quarantine.
-1. Under ‘Basic Information', click the edit     ![image](csa-networkfir--tslmk06pdck.png)
-
- button in the ‘Tags' row.
-1. Click Add Tag.
-1. Select the value ‘quarantine' under the existing key ‘hr_pplapp'.
+- Navigate to Compute Engine -> VM Instances
+- Click on the name of the instance you wish to quarantine.
+- Under ‘Basic Information', click the edit     ![image](csa-networkfir--tslmk06pdck.png) button in the ‘Tags' row.
+- Click Add Tag. Select the value ‘quarantine' under the existing key ‘hr_pplapp'.
 
 At this point the VMs tagged with key/value "hr_pplapp:quarantine" are isolated from the rest of the VPC or any egress traffic. Script and/or automate the above configuration in your incident playbooks to quarantine the VMs, then connect your Digital Forensics and Incident Response (DFIR)  tools for investigation.
 
