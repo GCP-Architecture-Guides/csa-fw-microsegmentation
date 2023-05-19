@@ -3,8 +3,7 @@ This is not an officially supported Google product.
 This code creates PoC demo environment for CSA Network Firewall microsegmentation. This demo code is not built for production workload. 
 ```
 
-
-![Architecture Diagram](./images/fw-microseg-arch.png)
+# Network Firewall Microsegmentation  Architecture Guide
 
 
 # Summary
@@ -119,11 +118,11 @@ terraform destroy
 
 To leverage IAM-governed tags for network microsegmentation, we need to uniquely describe our network elements using key:value pairs. Since a key:value will be used to apply microsegmentation rules, they should identify system components to the finest possible granularity. The following naming convention is proposed as an example (light gray components are optional):
 
-![image](csa-networkfir--1mb0t72lzdt.png)
+![image](./images/csa-networkfir--1mb0t72lzdt.png)
 
 As a practical example, consider the following key:value for the SAP Workday database, supporting HR in the us-east1 environment.
 
-![image](csa-networkfir--gn4liuvz8cl.png)
+![image](./images/csa-networkfir--gn4liuvz8cl.png)
 
 This tagging structure could change, depending on various factors within the target environment. For example, perhaps the business unit is known via the folder name, the same rules are to be applied to system components in all locations, or there are not multiple subsystem components.
 
@@ -173,17 +172,17 @@ The Cloud Armor logs contain important information on which client IPs are acces
 
 One way to monitor a microsegmented environment is to look at the number of firewall denies. An unusual amount of firewall denies to or from particular resources could indicate a compromise attempt. It could also indicate a misconfiguration. In the screenshot below, you can see a chart showing egress denies, focusing in on the data for a particular VM.
 
-![image](csa-networkfir--nlzgtg40mih.png)
+![image](./images/csa-networkfir--nlzgtg40mih.png)
 
 Monitoring dashboards also have a Logs Panel type. We can use it to display firewall logs in our microsegmented environment. Below, we have an example of a log panel displaying firewall deny logs.
 
-![image](csa-networkfir--h8v4o3dglee.png)
+![image](./images/csa-networkfir--h8v4o3dglee.png)
 
 Cloud Armor information can also be monitored, to get a sense of incoming threats. For example, we can use a dashboard to monitor the number of rule blocks and provide a view into its deny logs.
 
-![image](csa-networkfir--hhletluon7m.png)
+![image](./images/csa-networkfir--hhletluon7m.png)
 
-![image](csa-networkfir--wv7fihas9q9.png)
+![image](./images/csa-networkfir--wv7fihas9q9.png)
 
 An example Monitoring Dashboard can be loaded into your environment, by uploading [this YAML file](https://drive.google.com/file/d/1xQjk_khDPKCYAc5pf3Evj-3Aq_Nnn3sN/view?usp=share_link) to your Cloud Shell and executing the following command within your desired project:
 
@@ -193,7 +192,7 @@ gcloud monitoring dashboards create --config-from-file dash.yaml
 
 The dashboard with look like this:
 
-![image](csa-networkfir--u8sxl5ity58.png)
+![image](./images/csa-networkfir--u8sxl5ity58.png)
 
 ## Digital Forensic and Incident Response
 
@@ -201,7 +200,7 @@ The dashboard with look like this:
 
 In the case that a VM is suspected or known to be compromised, an organization may wish to quarantine it. This is a simple task using firewall rules. In this guide, we prepopulated the ‘hr_pplapp' tag key with the value ‘quarantine'. We also built high priority firewall rules that deny IPv4 and IPv6 traffic in and out of VMs tagged with ‘hr_pplapp:quarantine'. Here is what these rules look like in the GUI:
 
-![image](csa-networkfir--6qf2d333xu4.png)
+![image](./images/csa-networkfir--6qf2d333xu4.png)
 
 In the case that a VM needs to be quarantined, it can be tagged accordingly. To do this in the GUI:
 
@@ -221,11 +220,11 @@ The architecture in this doc applies zero-trust between different workload resou
 
 Users can look up which tags are applied to which VMs by leveraging Asset Inventory. In the Resource tab, we can search for VMs that use a particular key:
 
-![image](csa-networkfir--jtjxo7p0hh7.png)
+![image](./images/csa-networkfir--jtjxo7p0hh7.png)
 
 We can also narrow down our search to a particular key:value pair:
 
-![image](csa-networkfir--himstuj6um5.png)
+![image](./images/csa-networkfir--himstuj6um5.png)
 
 To Add: **Tag User vs tag administrator vs compute admin for separation of roles.**
 
