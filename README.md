@@ -60,35 +60,33 @@ A Web Application Firewall (WAF) implementation is included to demonstrate how w
 
 The following steps should be executed in Cloud Shell in the Google Cloud Console.
 
-1. Optional step: If a new project needs to be created and enable billing. Follow the steps in this [guide](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
-
-2. Open up Cloud shell and clone the [git repository](https://github.com/GoogleCloudPlatform/csa-fw-microsegmentation) using the command below.
+1. Open up Cloud shell and clone the [git repository](https://github.com/GoogleCloudPlatform/csa-fw-microsegmentation) using the command below.
 
 ```
 git clone https://github.com/GCP-Architecture-Guides/csa-fw-microsegmentation.git
 ```
 
-3. Navigate to the csa-fw-microsegmentation folder.
+2. Navigate to the csa-fw-microsegmentation folder.
 
 ```
 cd csa-fw-microsegmentation
 ```
 
-4. Provide the organization id (for IAM resource manager tags) and project id to deploy the architecture resources in the terraform variables.
+3. Provide the organization id (for IAM resource manager tags) and project id to deploy the architecture resources in the terraform variables.
 
 ```
 export TF_VAR_organization_id=[YOUR_ORGANIZATION_ID]
 
-export TF_VAR_microseg_project_id=[YOUR_PROJECT_ID]
+export TF_VAR_billing_account=[YOUR_BILLING_ACCOUNT_ID]
 ```
 
-5. To find your organization id, run the following command.
+4. To find your organization id, run the following command.
 
 ```
 gcloud projects get-ancestors [YOUR_PROJECT_ID]
 ```
 
-6. While in the csa-fw-microsegmentation, run the commands below in order. 
+5. While in the csa-fw-microsegmentation, run the commands below in order. 
 
 ```
 terraform init
