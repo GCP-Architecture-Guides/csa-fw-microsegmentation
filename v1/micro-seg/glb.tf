@@ -20,7 +20,7 @@
 # backend service with custom request and response headers
 resource "google_compute_backend_service" "belb_pplapp_presentation" {
   name          = "belb-pplapp-presentation"
-  project       = google_project.micro_seg_project.project_id
+  project       = var.microseg_project_id
   protocol      = "HTTP"
   port_name     = "http"
   timeout_sec   = 10
@@ -63,7 +63,7 @@ resource "google_compute_backend_service" "belb_pplapp_presentation" {
 resource "google_compute_url_map" "glb_pplapp_presentation_urlmap" {
   name            = "glb-pplapp-presentation"
   default_service = google_compute_backend_service.belb_pplapp_presentation.id
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   depends_on = [
     google_compute_backend_service.belb_pplapp_presentation,
   ]
@@ -75,7 +75,7 @@ resource "google_compute_target_http_proxy" "glb_pplapp_presentation_proxy" {
   name     = "glb-pplapp-presentation-proxy"
   provider = google-beta
   url_map  = google_compute_url_map.glb_pplapp_presentation_urlmap.id
-  project  = google_project.micro_seg_project.project_id
+  project  = var.microseg_project_id
   depends_on = [
     google_compute_url_map.glb_pplapp_presentation_urlmap,
   ]
@@ -86,7 +86,7 @@ resource "google_compute_target_http_proxy" "glb_pplapp_presentation_proxy" {
 # Reserved IP address for the external load balancer
 resource "google_compute_global_address" "glb_pplapp_presentation_address" {
   name         = "glb-pplapp-presentation-address"
-  project      = google_project.micro_seg_project.project_id
+  project      = var.microseg_project_id
   address_type = "EXTERNAL"
   depends_on = [
     google_compute_url_map.glb_pplapp_presentation_urlmap,
@@ -101,7 +101,7 @@ resource "google_compute_global_forwarding_rule" "glb_pplapp_presentation_rule" 
   port_range  = "80"
   target      = google_compute_target_http_proxy.glb_pplapp_presentation_proxy.id
   ip_address  = google_compute_global_address.glb_pplapp_presentation_address.id
-  project     = google_project.micro_seg_project.project_id
+  project     = var.microseg_project_id
   depends_on = [
     google_compute_global_address.glb_pplapp_presentation_address,
     google_compute_target_http_proxy.glb_pplapp_presentation_proxy,

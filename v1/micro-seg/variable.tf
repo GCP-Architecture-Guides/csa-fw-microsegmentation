@@ -17,10 +17,65 @@
 ##  This demo code is not built for production workload ##
 
 
-output "global_load_balancer_ip" {
-  value = module.micro_seg.global_load_balancer_ip
+variable "organization_id" {
+
 }
 
-output "note" {
-  value = "The GLB should be activated in a few minutes"
+variable "microseg_project_id" {
+
+}
+
+variable "iam_secure_tag" {
+}
+
+variable "vpc_network_name" {
+
+}
+
+variable "primary_network_region" {
+
+}
+
+variable "primary_network_zone" {
+
+}
+
+variable "primary_presentation_subnetwork" {
+
+}
+variable "primary_middleware_subnetwork" {
+
+}
+variable "primary_sub_proxy" {
+}
+
+variable "primary_database_subnetwork" {
+
+}
+
+variable "primary_ilb_ip" {
+
+}
+
+
+variable "secondary_network_region" {
+
+}
+
+variable "secondary_network_zone" {
+}
+
+
+variable "secondary_presentation_subnetwork" {
+
+}
+
+variable "secondary_middleware_subnetwork" {
+
+}
+variable "secondary_sub_proxy" {
+}
+
+variable "secondary_ilb_ip" {
+
 }

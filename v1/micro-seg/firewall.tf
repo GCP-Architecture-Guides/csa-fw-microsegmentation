@@ -22,7 +22,7 @@ resource "google_compute_network_firewall_policy" "primary" {
   name = "fwpol-microseg"
 
   description = "Global network firewall policy for micro segmentation architecture"
-  project     = google_project.micro_seg_project.project_id
+  project     = var.microseg_project_id
 
   depends_on = [
     time_sleep.wait_enable_service_api,
@@ -34,13 +34,13 @@ resource "google_compute_network_firewall_policy_association" "primary" {
   name              = "association"
   attachment_target = google_compute_network.primary_network.id
   firewall_policy   = google_compute_network_firewall_policy.primary.name
-  project           = google_project.micro_seg_project.project_id
+  project           = var.microseg_project_id
 }
 
 
 # allow access from health check ranges
 resource "google_compute_network_firewall_policy_rule" "allow_health_check_glb" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "allow"
   description     = "Allow access from Health Check and GLB to Web Servers"
   direction       = "INGRESS"
@@ -68,8 +68,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_health_check_glb" 
   }
 
   match {
-    #   src_ip_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
-    src_address_groups = [google_network_security_address_group.hc_glb_grp.id]
+    src_ip_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
 
 
 
@@ -92,7 +91,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_health_check_glb" 
 
 # Allow access from Identity-Aware Proxy
 resource "google_compute_network_firewall_policy_rule" "allow_iap" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "allow"
   description     = "Allow access from Identity-Aware Proxy"
   direction       = "INGRESS"
@@ -119,8 +118,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_iap" {
   }
 
   match {
-    #  src_ip_ranges = ["35.235.240.0/20"]
-    src_address_groups = [google_network_security_address_group.iap.id]
+    src_ip_ranges = ["35.235.240.0/20"]
 
     layer4_configs {
       ip_protocol = "tcp"
@@ -144,7 +142,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_iap" {
 
 # Allow access from Internal Load Balancer
 resource "google_compute_network_firewall_policy_rule" "allow_ilb" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "allow"
   description     = "Allow access from Presentation to Middleware HTTP LBs"
   direction       = "EGRESS"
@@ -190,7 +188,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_ilb" {
 
 # Allow access from HTTP LB Proxy subnet to Middleware 
 resource "google_compute_network_firewall_policy_rule" "pri_allow_http_lb_proxy" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "allow"
   description     = "Allow access from HTTP LB Proxy subnet to Middleware Primary"
   direction       = "INGRESS"
@@ -204,8 +202,7 @@ resource "google_compute_network_firewall_policy_rule" "pri_allow_http_lb_proxy"
     name = "tagValues/${google_tags_tag_value.pri_mdwl_value.name}"
   }
   match {
-    # src_ip_ranges = ["${google_compute_subnetwork.primary_sub_proxy.ip_cidr_range}"]
-    src_address_groups = [google_network_security_address_group.primary_proxy_sub.id]
+    src_ip_ranges = ["${google_compute_subnetwork.primary_sub_proxy.ip_cidr_range}"]
 
     layer4_configs {
       ip_protocol = "tcp"
@@ -227,7 +224,7 @@ resource "google_compute_network_firewall_policy_rule" "pri_allow_http_lb_proxy"
 
 # Allow access from HTTP LB Proxy subnet to Middleware 
 resource "google_compute_network_firewall_policy_rule" "sec_allow_http_lb_proxy" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "allow"
   description     = "Allow access from HTTP LB Proxy subnet to Middleware Secondary"
   direction       = "INGRESS"
@@ -242,9 +239,7 @@ resource "google_compute_network_firewall_policy_rule" "sec_allow_http_lb_proxy"
     name = "tagValues/${google_tags_tag_value.sec_mdwl_value.name}"
   }
   match {
-    #  src_ip_ranges = ["${google_compute_subnetwork.secondary_sub_proxy.ip_cidr_range}"]
-    src_address_groups = [google_network_security_address_group.secondary_proxy_sub.id]
-
+    src_ip_ranges = ["${google_compute_subnetwork.secondary_sub_proxy.ip_cidr_range}"]
 
     layer4_configs {
       ip_protocol = "tcp"
@@ -265,8 +260,8 @@ resource "google_compute_network_firewall_policy_rule" "sec_allow_http_lb_proxy"
 
 
 # Network Firewall rule to allow the Middleware Layer to communicate with the SQL DB 
-resource "google_compute_network_firewall_policy_rule" "allow_fwpol_microseg_db" {
-  project         = google_project.micro_seg_project.project_id
+resource "google_compute_network_firewall_policy_rule" "allow_fwpol_microseg_db1" {
+  project         = var.microseg_project_id
   action          = "allow"
   description     = "Rule to allow access from middleware to database"
   direction       = "EGRESS"
@@ -306,7 +301,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_fwpol_microseg_db"
 
 # Network Firewall rule for your instances to download packages private access 
 resource "google_compute_network_firewall_policy_rule" "allow_private_access" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "allow"
   description     = "Rule to allow VMs access to Private Google APIs"
   direction       = "EGRESS"
@@ -318,8 +313,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_private_access" {
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
 
   match {
-    # dest_ip_ranges = ["199.36.153.8/30"]
-    dest_address_groups = [google_network_security_address_group.private_google_apis.id]
+    dest_ip_ranges = ["199.36.153.8/30"]
 
     layer4_configs {
       ip_protocol = "tcp"
@@ -335,7 +329,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_private_access" {
 
 # Network Firewall rule for your instances to download packages private access 
 resource "google_compute_network_firewall_policy_rule" "allow_restricted_access" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "allow"
   description     = "Rule to allow VMs access to Restricted Google APIs"
   direction       = "EGRESS"
@@ -347,8 +341,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_restricted_access"
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
 
   match {
-    #    dest_ip_ranges = ["199.36.153.4/30"]
-    dest_address_groups = [google_network_security_address_group.restricted_google_apis.id]
+    dest_ip_ranges = ["199.36.153.4/30"]
 
     layer4_configs {
       ip_protocol = "tcp"
@@ -361,11 +354,12 @@ resource "google_compute_network_firewall_policy_rule" "allow_restricted_access"
   ]
 }
 
-
-
+/*
+## Network Firewall terraform does not support FQDN yet; We will be using a local-exec to setup this firewall rule
+## Network Firewall rule for your instances to download packages private access 
 ## https://github.com/hashicorp/terraform-provider-google/issues/13688
 resource "google_compute_network_firewall_policy_rule" "allow_restricted_access_php" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "allow"
   description     = "Allow access to install PHP Google Client Libraries"
   direction       = "EGRESS"
@@ -377,7 +371,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_restricted_access_
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
 
   match {
-    dest_fqdns = ["repo.packagist.org", "api.github.com", "codeload.github.com"]
+    dest_fqdns = ["repo.packagist.org", "api.github.com",  "codeload.github.com"]
 
     layer4_configs {
       ip_protocol = "tcp"
@@ -389,11 +383,48 @@ resource "google_compute_network_firewall_policy_rule" "allow_restricted_access_
     google_compute_network_firewall_policy_association.primary,
   ]
 }
+*/
+
+
+
+# Network Firewall rule for your instances to download packages private access 
+resource "null_resource" "allow_restricted_access_php" {
+  triggers = {
+    project     = var.microseg_project_id
+    policy_name = "${google_compute_network_firewall_policy.primary.name}"
+  }
+
+  provisioner "local-exec" {
+    command     = <<EOT
+    gcloud beta compute network-firewall-policies rules create 80100 --action allow --firewall-policy "${google_compute_network_firewall_policy.primary.name}" --description "Allow access to install PHP Google Client Libraries" --direction EGRESS --dest-fqdns repo.packagist.org,api.github.com,codeload.github.com --layer4-configs tcp:443 --enable-logging --no-disabled --global-firewall-policy --project "${var.microseg_project_id}"
+    EOT
+    working_dir = path.module
+  }
+
+  provisioner "local-exec" {
+    when        = destroy
+    command     = <<EOT
+    gcloud beta compute network-firewall-policies rules delete 80100  --firewall-policy "${self.triggers.policy_name}" --project "${self.triggers.project}" --global-firewall-policy
+    EOT
+    working_dir = path.module
+  }
+
+  depends_on = [
+    google_compute_network_firewall_policy.primary,
+    google_compute_network_firewall_policy_association.primary,
+  ]
+}
+
+
+
+
+
+
 
 
 # Deny ingress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv4" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "deny"
   description     = "deny-ingress-ipv4"
   direction       = "INGRESS"
@@ -420,7 +451,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv4" {
 
 # Deny ingress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "deny"
   description     = "deny-ingress-ipv6"
   direction       = "INGRESS"
@@ -432,7 +463,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6" {
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
 
   match {
-    src_ip_ranges = ["::/0"]
+    src_ip_ranges = ["0::0/0"]
 
     layer4_configs {
       ip_protocol = "all"
@@ -446,7 +477,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6" {
 
 # Deny egress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv4" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "deny"
   description     = "deny-ingress-ipv4"
   direction       = "EGRESS"
@@ -473,7 +504,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv4" {
 
 # Deny egress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv6" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "deny"
   description     = "deny-ingress-ipv6"
   direction       = "EGRESS"
@@ -485,7 +516,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv6" {
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
 
   match {
-    dest_ip_ranges = ["::/0"]
+    dest_ip_ranges = ["0::0/0"]
 
     layer4_configs {
       ip_protocol = "all"
@@ -503,7 +534,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv6" {
 
 # Deny ingress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv4_quarantine" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "deny"
   description     = "deny-ingress-ipv4-quarantine"
   direction       = "INGRESS"
@@ -533,7 +564,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv4_quaran
 
 # Deny ingress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6_quarantine" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "deny"
   description     = "deny-ingress-ipv6-quarantine"
   direction       = "INGRESS"
@@ -548,7 +579,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6_quaran
   }
 
   match {
-    src_ip_ranges = ["::/0"]
+    src_ip_ranges = ["0::0/0"]
 
 
     layer4_configs {
@@ -564,7 +595,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6_quaran
 
 # Deny egress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv4_quarantine" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "deny"
   description     = "deny-ingress-ipv4-quarantine"
   direction       = "EGRESS"
@@ -596,7 +627,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv4_quarant
 
 # Deny egress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv6_quarantine" {
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   action          = "deny"
   description     = "deny-ingress-ipv6-quarantine"
   direction       = "EGRESS"
@@ -611,7 +642,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv6_quarant
   }
 
   match {
-    dest_ip_ranges = ["::/0"]
+    dest_ip_ranges = ["0::0/0"]
 
 
     layer4_configs {

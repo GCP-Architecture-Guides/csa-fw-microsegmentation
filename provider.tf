@@ -17,13 +17,14 @@
 ##  This demo code is not built for production workload ##
 
 
+
 terraform {
   required_version = ">= 0.13"
+}
 
-  required_providers {
-    google = {
-    }
 
-  }
-
+provider "google-beta" {
+  alias                 = "service"
+  user_project_override = true
+  billing_project       = google_project.micro_seg_project.project_id
 }

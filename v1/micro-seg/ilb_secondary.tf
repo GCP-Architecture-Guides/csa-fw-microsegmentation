@@ -20,7 +20,7 @@
 # backend service with custom request and response headers
 resource "google_compute_region_backend_service" "sec_ilb_pplapp_middleware" {
   name                  = "ilb-pplapp-middleware-${var.secondary_network_region}"
-  project               = google_project.micro_seg_project.project_id
+  project               = var.microseg_project_id
   region                = var.secondary_network_region
   protocol              = "HTTP"
   port_name             = "http"
@@ -45,7 +45,6 @@ resource "google_compute_region_backend_service" "sec_ilb_pplapp_middleware" {
 
   depends_on = [
     google_compute_region_instance_group_manager.sec_instgrp_pplapp_middleware,
-    google_compute_health_check.default,
   ]
 }
 
@@ -54,7 +53,7 @@ resource "google_compute_region_backend_service" "sec_ilb_pplapp_middleware" {
 resource "google_compute_region_url_map" "sec_ilb_pplapp_middleware_urlmap" {
   name            = "ilb-pplapp-middleware-${var.secondary_network_region}"
   default_service = google_compute_region_backend_service.sec_ilb_pplapp_middleware.id
-  project         = google_project.micro_seg_project.project_id
+  project         = var.microseg_project_id
   region          = var.secondary_network_region
   depends_on = [
     google_compute_region_backend_service.sec_ilb_pplapp_middleware,
@@ -68,7 +67,7 @@ resource "google_compute_region_target_http_proxy" "sec_ilb_pplapp_middleware_pr
   region   = var.secondary_network_region
   provider = google-beta
   url_map  = google_compute_region_url_map.sec_ilb_pplapp_middleware_urlmap.id
-  project  = google_project.micro_seg_project.project_id
+  project  = var.microseg_project_id
   depends_on = [
     google_compute_region_url_map.sec_ilb_pplapp_middleware_urlmap,
   ]
@@ -81,7 +80,7 @@ resource "google_compute_address" "sec_ilb_pplapp_presentation_address" {
   provider     = google-beta
   region       = var.secondary_network_region
   network_tier = "PREMIUM"
-  project      = google_project.micro_seg_project.project_id
+  project      = var.microseg_project_id
   depends_on = [
     time_sleep.wait_enable_service_api,
   ]
@@ -101,7 +100,7 @@ resource "google_compute_forwarding_rule" "sec_ilb_pplapp_middleware_rule" {
   subnetwork            = google_compute_subnetwork.secondary_middleware_subnetwork.id
   network_tier          = "PREMIUM"
   region                = var.secondary_network_region
-  project               = google_project.micro_seg_project.project_id
+  project               = var.microseg_project_id
   depends_on = [
     google_compute_region_target_http_proxy.sec_ilb_pplapp_middleware_proxy,
     google_compute_subnetwork.secondary_sub_proxy,

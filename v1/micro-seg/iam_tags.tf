@@ -21,14 +21,13 @@
 ########################### IAM Tags#############
 
 resource "google_tags_tag_key" "key" {
-  # parent     = "organizations/${var.organization_id}"
-  parent     = "projects/${google_project.micro_seg_project.number}"
+  parent     = "organizations/${var.organization_id}"
   short_name = var.iam_secure_tag
 
   description = "For use with network firewall."
   purpose     = "GCE_FIREWALL"
   purpose_data = {
-    network = "${google_project.micro_seg_project.project_id}/${var.vpc_network_name}"
+    network = "${var.microseg_project_id}/${var.vpc_network_name}"
   }
   depends_on = [
     time_sleep.wait_enable_service_api,

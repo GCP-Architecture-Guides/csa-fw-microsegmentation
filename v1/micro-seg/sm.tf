@@ -29,12 +29,13 @@ resource "random_password" "db_user_password" {
 resource "random_password" "db_user_name" {
   length    = 8
   min_lower = 8
+
   depends_on = [time_sleep.wait_enable_service_api]
 }
 */
 
 resource "google_secret_manager_secret" "sql_db_user_password" {
-  project   = google_project.micro_seg_project.project_id
+  project   = var.microseg_project_id
   secret_id = "sql-db-password"
   replication {
     auto {}
@@ -55,13 +56,14 @@ resource "google_secret_manager_secret_version" "sql_db_user_password" {
 
 /*
 data "google_compute_default_service_account" "default" {
-  project  = google_project.micro_seg_project.project_id
-  depends_on = [time_sleep.wait_enable_service_api]
+    project  = var.microseg_project_id
+     depends_on = [time_sleep.wait_enable_service_api]
 }
+
 */
 
 resource "google_secret_manager_secret_iam_member" "primary_middleware_access" {
-  project   = google_project.micro_seg_project.project_id
+  project   = var.microseg_project_id
   member    = "serviceAccount:${google_service_account.primary_sa_pplapp_middleware.email}"
   role      = "roles/secretmanager.secretAccessor"
   secret_id = google_secret_manager_secret.sql_db_user_password.id
@@ -73,7 +75,7 @@ resource "google_secret_manager_secret_iam_member" "primary_middleware_access" {
 
 
 resource "google_secret_manager_secret_iam_member" "secondary_middleware_access" {
-  project   = google_project.micro_seg_project.project_id
+  project   = var.microseg_project_id
   member    = "serviceAccount:${google_service_account.secondary_sa_pplapp_middleware.email}"
   role      = "roles/secretmanager.secretAccessor"
   secret_id = google_secret_manager_secret.sql_db_user_password.id

@@ -20,9 +20,7 @@
 module "micro_seg" {
   source                            = "./micro-seg"
   organization_id                   = var.organization_id
-  billing_account                   = var.billing_account
-  microseg_project_name             = var.microseg_project_name
-  microseg_folder_name              = var.microseg_folder_name
+  microseg_project_id               = var.microseg_project_id
   iam_secure_tag                    = var.iam_secure_tag
   vpc_network_name                  = var.vpc_network_name
   primary_network_region            = var.primary_network_region
@@ -38,6 +36,5 @@ module "micro_seg" {
   secondary_middleware_subnetwork   = var.secondary_middleware_subnetwork
   secondary_sub_proxy               = var.secondary_sub_proxy
   secondary_ilb_ip                  = var.secondary_ilb_ip
-  skip_delete                       = var.skip_delete
 
 }

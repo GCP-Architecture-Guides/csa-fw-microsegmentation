@@ -17,10 +17,13 @@
 ##  This demo code is not built for production workload ##
 
 
-output "global_load_balancer_ip" {
-  value = module.micro_seg.global_load_balancer_ip
-}
+terraform {
+  required_version = ">= 0.13"
 
-output "note" {
-  value = "The GLB should be activated in a few minutes"
+  required_providers {
+    google = {
+    }
+
+  }
+
 }

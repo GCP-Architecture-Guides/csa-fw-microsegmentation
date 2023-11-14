@@ -21,9 +21,19 @@ variable "organization_id" {
 
 }
 
-variable "microseg_project_id" {
+variable "billing_account" {
 
 }
+
+
+variable "microseg_folder_name" {
+
+}
+
+variable "microseg_project_name" {
+
+}
+
 
 variable "iam_secure_tag" {
 }
@@ -79,3 +89,7 @@ variable "secondary_sub_proxy" {
 variable "secondary_ilb_ip" {
 
 }
+
+variable "skip_delete" {
+}
+

@@ -20,30 +20,11 @@
 variable "organization_id" {
   type        = string
   description = "Organization ID to add tags at Org level"
-  default     = "XXXXXXX"
 }
 
-variable "billing_account" {
-  type        = string
-  description = "billing account required"
-  default     = "XXXXX-XXXXX-XXXXX"
-}
-
-variable "microseg_folder_name" {
+variable "microseg_project_id" {
   type        = string
   description = "Project ID to deploy resources"
-  default     = "CSA-Micro-Segment"
-}
-
-variable "microseg_project_name" {
-  type        = string
-  description = "Project ID to deploy resources"
-  default     = "csa-micro-segment"
-}
-
-variable "skip_delete" {
-  description = " If true, the Terraform resource can be deleted without deleting the Project via the Google API."
-  default     = "false"
 }
 
 variable "iam_secure_tag" {
@@ -110,6 +91,7 @@ variable "secondary_ilb_ip" {
   description = "IP address for secondary region internal load balancer"
   default     = "10.40.0.10"
 }
+
 
 
 
