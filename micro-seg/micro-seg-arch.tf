@@ -16,7 +16,7 @@
 ##  This code creates demo environment for CSA Network Firewall microsegmentation  ##
 ##  This demo code is not built for production workload ##
 
-
+/*
 # Enable the necessary API services
 resource "google_project_service" "armor_api_service" {
   for_each = toset([
@@ -72,4 +72,4 @@ resource "google_compute_health_check" "default" {
 }
 
 
-
+*/
