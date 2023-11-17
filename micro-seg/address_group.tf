@@ -120,3 +120,17 @@ resource "google_network_security_address_group" "secondary_proxy_sub" {
     time_sleep.wait_enable_service_api,
   ]
 }
+
+resource "google_network_security_address_group" "pplapp_sqldb" {
+
+  name        = "pplapp-sqldb"
+  parent      = google_project.micro_seg_project.id
+  location    = "global"
+  description = "SQL Database IP"
+  type        = "IPV4"
+  capacity    = "1"
+  items       = ["${google_sql_database_instance.private_sql_instance.ip_address.0.ip_address}"]
+  depends_on = [
+    google_sql_database_instance.private_sql_instance,
+  ]
+}

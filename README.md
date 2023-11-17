@@ -54,15 +54,15 @@ A Web Application Firewall (WAF) implementation is included to demonstrate how w
 
 1. Sign in to your organization and assign yourself the following roles:
 
-- Policy Tag Admin role at organization level
-- Editor role on the project to be used for the deployment. 
+- Billing Account User
+- Folder Creator
+- Project Creator
 - The terraform assigns Storage Object Viewer role to the SQL database service account at project level.
 
-The following steps should be executed in Cloud Shell in the Google Cloud Console.
+The following steps should be executed in Cloud Shell in the Google Cloud Console. Unset any project using 'gcloud config unset project'
 
-1. Optional step: If a new project needs to be created and enable billing. Follow the steps in this [guide](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
 
-2. Open up Cloud shell and clone the [git repository](https://github.com/GoogleCloudPlatform/csa-fw-microsegmentation) using the command below.
+2. Open up Cloud shell and Unset any project using 'gcloud config unset project'. Clone the [git repository](https://github.com/GoogleCloudPlatform/csa-fw-microsegmentation) using the command below.
 
 ```
 git clone https://github.com/GCP-Architecture-Guides/csa-fw-microsegmentation.git
@@ -74,12 +74,12 @@ git clone https://github.com/GCP-Architecture-Guides/csa-fw-microsegmentation.gi
 cd csa-fw-microsegmentation
 ```
 
-4. Provide the organization id (for IAM resource manager tags) and project id to deploy the architecture resources in the terraform variables.
+4. Provide the organization id and billing_account for project creation to deploy the architecture resources in the terraform variables. Edits can also be made directly in [variable.tf](variable.tf) file.
 
 ```
 export TF_VAR_organization_id=[YOUR_ORGANIZATION_ID]
 
-export TF_VAR_microseg_project_id=[YOUR_PROJECT_ID]
+export TF_VAR_billing_account=[YOUR_BILLING_ACCOUNT]
 ```
 
 5. To find your organization id, run the following command.

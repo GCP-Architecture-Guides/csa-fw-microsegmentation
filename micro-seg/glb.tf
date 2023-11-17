@@ -96,12 +96,13 @@ resource "google_compute_global_address" "glb_pplapp_presentation_address" {
 
 # Forwarding rule for the external load balancer
 resource "google_compute_global_forwarding_rule" "glb_pplapp_presentation_rule" {
-  name        = "glb-pplapp-presentation-rule"
-  ip_protocol = "TCP"
-  port_range  = "80"
-  target      = google_compute_target_http_proxy.glb_pplapp_presentation_proxy.id
-  ip_address  = google_compute_global_address.glb_pplapp_presentation_address.id
-  project     = google_project.micro_seg_project.project_id
+  name                  = "glb-pplapp-presentation-rule"
+  load_balancing_scheme = "EXTERNAL"
+  ip_protocol           = "TCP"
+  port_range            = "80"
+  target                = google_compute_target_http_proxy.glb_pplapp_presentation_proxy.id
+  ip_address            = google_compute_global_address.glb_pplapp_presentation_address.id
+  project               = google_project.micro_seg_project.project_id
   depends_on = [
     google_compute_global_address.glb_pplapp_presentation_address,
     google_compute_target_http_proxy.glb_pplapp_presentation_proxy,

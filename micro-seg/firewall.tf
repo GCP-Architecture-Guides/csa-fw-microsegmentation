@@ -134,6 +134,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_iap" {
     google_tags_tag_value.sec_ppl_value,
     google_tags_tag_value.sec_mdwl_value,
     google_compute_network_firewall_policy_association.primary,
+    google_network_security_address_group.iap,
   ]
 }
 
@@ -167,7 +168,8 @@ resource "google_compute_network_firewall_policy_rule" "allow_ilb" {
   }
 
   match {
-    dest_ip_ranges = ["${google_compute_forwarding_rule.pri_ilb_pplapp_middleware_rule.ip_address}", "${google_compute_forwarding_rule.sec_ilb_pplapp_middleware_rule.ip_address}"]
+    #dest_ip_ranges = ["${google_compute_forwarding_rule.pri_ilb_pplapp_middleware_rule.ip_address}", "${google_compute_forwarding_rule.sec_ilb_pplapp_middleware_rule.ip_address}"]
+    dest_address_groups = [google_network_security_address_group.pplapp_middleware_ilb_grp.id]
 
     layer4_configs {
       ip_protocol = "tcp"
@@ -183,6 +185,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_ilb" {
     google_compute_forwarding_rule.pri_ilb_pplapp_middleware_rule,
     google_compute_forwarding_rule.sec_ilb_pplapp_middleware_rule,
     google_compute_network_firewall_policy_association.primary,
+    google_network_security_address_group.pplapp_middleware_ilb_grp,
   ]
 }
 
@@ -219,6 +222,7 @@ resource "google_compute_network_firewall_policy_rule" "pri_allow_http_lb_proxy"
     google_tags_tag_value.sec_ppl_value,
     google_tags_tag_value.sec_mdwl_value,
     google_compute_network_firewall_policy_association.primary,
+    google_network_security_address_group.primary_proxy_sub,
   ]
 }
 
@@ -258,6 +262,7 @@ resource "google_compute_network_firewall_policy_rule" "sec_allow_http_lb_proxy"
     google_tags_tag_value.sec_ppl_value,
     google_tags_tag_value.sec_mdwl_value,
     google_compute_network_firewall_policy_association.primary,
+    google_network_security_address_group.secondary_proxy_sub,
   ]
 }
 
@@ -285,8 +290,11 @@ resource "google_compute_network_firewall_policy_rule" "allow_fwpol_microseg_db"
   }
 
 
+
   match {
-    dest_ip_ranges = ["${google_sql_database_instance.private_sql_instance.ip_address.0.ip_address}"] ## SQL IP Address
+    # dest_ip_ranges = ["${google_sql_database_instance.private_sql_instance.ip_address.0.ip_address}"] ## SQL IP Address
+    dest_address_groups = ["${google_network_security_address_group.pplapp_sqldb.id}"]
+
 
     layer4_configs {
       ip_protocol = "tcp"
@@ -297,6 +305,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_fwpol_microseg_db"
     google_compute_network_firewall_policy.primary,
     google_compute_network_firewall_policy_association.primary,
     google_sql_database_instance.private_sql_instance,
+    google_network_security_address_group.pplapp_sqldb,
   ]
 }
 
@@ -316,6 +325,21 @@ resource "google_compute_network_firewall_policy_rule" "allow_private_access" {
   priority        = 80000
   rule_name       = "allow-private-access"
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
+  target_secure_tags {
+    name = "tagValues/${google_tags_tag_value.pri_ppl_value.name}"
+  }
+
+  target_secure_tags {
+    name = "tagValues/${google_tags_tag_value.pri_mdwl_value.name}"
+  }
+
+  target_secure_tags {
+    name = "tagValues/${google_tags_tag_value.sec_ppl_value.name}"
+  }
+
+  target_secure_tags {
+    name = "tagValues/${google_tags_tag_value.sec_mdwl_value.name}"
+  }
 
   match {
     # dest_ip_ranges = ["199.36.153.8/30"]
@@ -329,6 +353,11 @@ resource "google_compute_network_firewall_policy_rule" "allow_private_access" {
   depends_on = [
     google_compute_network_firewall_policy.primary,
     google_compute_network_firewall_policy_association.primary,
+    google_network_security_address_group.private_google_apis,
+    google_tags_tag_value.pri_ppl_value,
+    google_tags_tag_value.pri_mdwl_value,
+    google_tags_tag_value.sec_ppl_value,
+    google_tags_tag_value.sec_mdwl_value,
   ]
 }
 
@@ -345,6 +374,21 @@ resource "google_compute_network_firewall_policy_rule" "allow_restricted_access"
   priority        = 80010
   rule_name       = "allow-restricted-access"
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
+  target_secure_tags {
+    name = "tagValues/${google_tags_tag_value.pri_ppl_value.name}"
+  }
+
+  target_secure_tags {
+    name = "tagValues/${google_tags_tag_value.pri_mdwl_value.name}"
+  }
+
+  target_secure_tags {
+    name = "tagValues/${google_tags_tag_value.sec_ppl_value.name}"
+  }
+
+  target_secure_tags {
+    name = "tagValues/${google_tags_tag_value.sec_mdwl_value.name}"
+  }
 
   match {
     #    dest_ip_ranges = ["199.36.153.4/30"]
@@ -358,6 +402,11 @@ resource "google_compute_network_firewall_policy_rule" "allow_restricted_access"
   depends_on = [
     google_compute_network_firewall_policy.primary,
     google_compute_network_firewall_policy_association.primary,
+    google_network_security_address_group.restricted_google_apis,
+    google_tags_tag_value.pri_ppl_value,
+    google_tags_tag_value.pri_mdwl_value,
+    google_tags_tag_value.sec_ppl_value,
+    google_tags_tag_value.sec_mdwl_value,
   ]
 }
 
@@ -375,6 +424,21 @@ resource "google_compute_network_firewall_policy_rule" "allow_restricted_access_
   priority        = 80100
   rule_name       = "allow-restricted-access-php"
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
+  target_secure_tags {
+    name = "tagValues/${google_tags_tag_value.pri_ppl_value.name}"
+  }
+
+  target_secure_tags {
+    name = "tagValues/${google_tags_tag_value.pri_mdwl_value.name}"
+  }
+
+  target_secure_tags {
+    name = "tagValues/${google_tags_tag_value.sec_ppl_value.name}"
+  }
+
+  target_secure_tags {
+    name = "tagValues/${google_tags_tag_value.sec_mdwl_value.name}"
+  }
 
   match {
     dest_fqdns = ["repo.packagist.org", "api.github.com", "codeload.github.com"]
@@ -387,6 +451,10 @@ resource "google_compute_network_firewall_policy_rule" "allow_restricted_access_
   depends_on = [
     google_compute_network_firewall_policy.primary,
     google_compute_network_firewall_policy_association.primary,
+    google_tags_tag_value.pri_ppl_value,
+    google_tags_tag_value.pri_mdwl_value,
+    google_tags_tag_value.sec_ppl_value,
+    google_tags_tag_value.sec_mdwl_value,
   ]
 }
 

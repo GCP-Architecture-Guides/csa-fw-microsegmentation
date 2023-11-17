@@ -70,11 +70,11 @@ resource "google_sql_database_instance" "private_sql_instance" {
     }
 
     ip_configuration {
-      private_network = google_compute_network.primary_network.id
-      require_ssl     = false
-      ipv4_enabled    = false
+      private_network                               = google_compute_network.primary_network.id
+      require_ssl                                   = false
+      ipv4_enabled                                  = false
       enable_private_path_for_google_cloud_services = true
-    /*
+      /*
     psc_config {
         psc_enabled = true
  #       allowed_consumer_projects = ["allowed-consumer-project-name"]

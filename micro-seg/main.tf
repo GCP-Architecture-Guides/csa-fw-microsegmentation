@@ -22,12 +22,26 @@ resource "random_id" "random_suffix" {
   byte_length = 4
 }
 
+resource "null_resource" "unset_project_in_cloudshell" {
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+
+  provisioner "local-exec" {
+    command = <<EOT
+  gcloud config unset project
+  EOT
+  }
+
+}
+
 
 
 # Create Folder in GCP Organization
 resource "google_folder" "micro_seg_folder" {
-  display_name = var.microseg_folder_name
+  display_name = "${var.microseg_folder_name}-${random_id.random_suffix.hex}"
   parent       = "organizations/${var.organization_id}"
+  depends_on   = [resource.null_resource.unset_project_in_cloudshell]
 }
 
 
@@ -39,6 +53,10 @@ resource "google_project" "micro_seg_project" {
   name        = var.microseg_project_name
   project_id  = "${var.microseg_project_name}-${random_id.random_suffix.hex}"
   skip_delete = var.skip_delete
+  depends_on = [resource.null_resource.unset_project_in_cloudshell,
+    google_folder.micro_seg_folder,
+  ]
+
 }
 
 

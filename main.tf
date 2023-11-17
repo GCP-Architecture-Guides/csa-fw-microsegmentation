@@ -39,5 +39,5 @@ module "micro_seg" {
   secondary_sub_proxy               = var.secondary_sub_proxy
   secondary_ilb_ip                  = var.secondary_ilb_ip
   skip_delete                       = var.skip_delete
-
 }
+

@@ -16,18 +16,30 @@
 ##  This code creates demo environment for CSA Network Firewall microsegmentation  ##
 ##  This demo code is not built for production workload ##
 
+# set specific variables here for your own deployment
+
+/******************************
+    REQUIRED TO CHANGE
+******************************/
 
 variable "organization_id" {
   type        = string
   description = "Organization ID to add tags at Org level"
-  default     = "XXXXXXX"
+  default     = "XXXXXX" ## Update the org id
 }
 
 variable "billing_account" {
   type        = string
   description = "billing account required"
-  default     = "XXXXX-XXXXX-XXXXX"
+  default     = "XXXXX-XXXXX-XXXXXX" ## Update the billing account
 }
+
+/*****************************
+RECOMMENDED DEFAULTS - DO NOT CHANGE
+
+unless you really really want to :)
+*****************************/
+
 
 variable "microseg_folder_name" {
   type        = string
