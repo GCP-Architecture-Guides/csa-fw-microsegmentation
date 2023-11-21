@@ -91,6 +91,8 @@ gcloud projects get-ancestors [YOUR_PROJECT_ID]
 6. While in the csa-fw-microsegmentation, run the commands below in order. 
 
 ```
+gcloud config unset project
+
 terraform init
 
 terraform plan
