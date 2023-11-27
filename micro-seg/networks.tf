@@ -23,7 +23,7 @@ resource "google_compute_network" "primary_network" {
   #  provider                = google-beta
   auto_create_subnetworks         = false
   delete_default_routes_on_create = false
-  project                         = google_project.micro_seg_project.project_id
+  project                         = local.csa_project_id
   depends_on = [
     time_sleep.wait_enable_service_api,
   ]
@@ -35,16 +35,16 @@ resource "google_compute_network" "primary_network" {
 # Delete default network and firewall rules
 resource "null_resource" "delete_def_network" {
   triggers = {
-    project            = google_project.micro_seg_project.project_id
+    project            = local.csa_project_id
   }
 
   provisioner "local-exec" {
     command     = <<EOT
-    gcloud compute firewall-rules -q delete default-allow-internal --project ${google_project.micro_seg_project.project_id}
-    gcloud compute firewall-rules -q delete default-allow-rdp --project ${google_project.micro_seg_project.project_id}
-    gcloud compute firewall-rules -q delete default-allow-ssh --project ${google_project.micro_seg_project.project_id}
-    gcloud compute firewall-rules -q delete default-allow-icmp --project ${google_project.micro_seg_project.project_id}
-    gcloud compute networks delete default -q --project ${google_project.micro_seg_project.project_id}
+    gcloud compute firewall-rules -q delete default-allow-internal --project ${local.csa_project_id}
+    gcloud compute firewall-rules -q delete default-allow-rdp --project ${local.csa_project_id}
+    gcloud compute firewall-rules -q delete default-allow-ssh --project ${local.csa_project_id}
+    gcloud compute firewall-rules -q delete default-allow-icmp --project ${local.csa_project_id}
+    gcloud compute networks delete default -q --project ${local.csa_project_id}
     EOT
     working_dir = path.module
   } 
@@ -63,7 +63,7 @@ resource "google_compute_subnetwork" "primary_presentation_subnetwork" {
   ip_cidr_range = var.primary_presentation_subnetwork
   region        = var.primary_network_region
   network       = google_compute_network.primary_network.id
-  project       = google_project.micro_seg_project.project_id
+  project       = local.csa_project_id
   # Enabling VPC flow logs
   log_config {
     aggregation_interval = "INTERVAL_10_MIN"
@@ -85,7 +85,7 @@ resource "google_compute_subnetwork" "primary_middleware_subnetwork" {
   ip_cidr_range = var.primary_middleware_subnetwork
   region        = var.primary_network_region
   network       = google_compute_network.primary_network.id
-  project       = google_project.micro_seg_project.project_id
+  project       = local.csa_project_id
   # Enabling VPC flow logs
   log_config {
     aggregation_interval = "INTERVAL_10_MIN"
@@ -103,7 +103,7 @@ resource "google_compute_subnetwork" "primary_middleware_subnetwork" {
 
 # Create a CloudRouter for primary middleware subnet
 resource "google_compute_router" "primary_middleware_router" {
-  project = google_project.micro_seg_project.project_id
+  project = local.csa_project_id
   name    = "cloudr-microseg-${var.primary_network_region}"
   region  = var.primary_network_region
   network = google_compute_network.primary_network.id
@@ -118,7 +118,7 @@ resource "google_compute_router" "primary_middleware_router" {
 
 # Configure a CloudNAT for primary middleware subnet
 resource "google_compute_router_nat" "primary_middleware_nats" {
-  project                            = google_project.micro_seg_project.project_id
+  project                            = local.csa_project_id
   name                               = "cloudnat-microseg-${var.primary_network_region}"
   router                             = google_compute_router.primary_middleware_router.name
   region                             = google_compute_router.primary_middleware_router.region
@@ -153,7 +153,7 @@ resource "google_compute_subnetwork" "primary_sub_proxy" {
   ip_cidr_range = var.primary_sub_proxy
   region        = var.primary_network_region
   network       = google_compute_network.primary_network.id
-  project       = google_project.micro_seg_project.project_id
+  project       = local.csa_project_id
   purpose       = "INTERNAL_HTTPS_LOAD_BALANCER"
   role          = "ACTIVE"
 
@@ -172,7 +172,7 @@ resource "google_compute_subnetwork" "secondary_presentation_subnetwork" {
   ip_cidr_range = var.secondary_presentation_subnetwork
   region        = var.secondary_network_region
   network       = google_compute_network.primary_network.id
-  project       = google_project.micro_seg_project.project_id
+  project       = local.csa_project_id
   # Enabling VPC flow logs
   log_config {
     aggregation_interval = "INTERVAL_10_MIN"
@@ -194,7 +194,7 @@ resource "google_compute_subnetwork" "secondary_middleware_subnetwork" {
   ip_cidr_range = var.secondary_middleware_subnetwork
   region        = var.secondary_network_region
   network       = google_compute_network.primary_network.id
-  project       = google_project.micro_seg_project.project_id
+  project       = local.csa_project_id
   # Enabling VPC flow logs
   log_config {
     aggregation_interval = "INTERVAL_10_MIN"
@@ -212,7 +212,7 @@ resource "google_compute_subnetwork" "secondary_middleware_subnetwork" {
 
 # Create a CloudRouter for secondary middleware subnet
 resource "google_compute_router" "secondary_middleware_router" {
-  project = google_project.micro_seg_project.project_id
+  project = local.csa_project_id
   name    = "cloudr-microseg-${var.secondary_network_region}"
   region  = var.secondary_network_region
   network = google_compute_network.primary_network.id
@@ -225,7 +225,7 @@ resource "google_compute_router" "secondary_middleware_router" {
 
 # Configure a CloudNAT for secondary middleware subnet
 resource "google_compute_router_nat" "secondary_middleware_nats" {
-  project                            = google_project.micro_seg_project.project_id
+  project                            = local.csa_project_id
   name                               = "cloudnat-microseg-${var.secondary_network_region}"
   router                             = google_compute_router.secondary_middleware_router.name
   region                             = google_compute_router.secondary_middleware_router.region
@@ -255,7 +255,7 @@ resource "google_compute_subnetwork" "secondary_sub_proxy" {
   ip_cidr_range = var.secondary_sub_proxy
   region        = var.secondary_network_region
   network       = google_compute_network.primary_network.id
-  project       = google_project.micro_seg_project.project_id
+  project       = local.csa_project_id
   purpose       = "INTERNAL_HTTPS_LOAD_BALANCER"
   role          = "ACTIVE"
   depends_on = [

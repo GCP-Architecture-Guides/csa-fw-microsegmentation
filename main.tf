@@ -19,10 +19,12 @@
 
 module "micro_seg" {
   source                            = "./micro-seg"
+  create_new_project                = var.create_new_project
   organization_id                   = var.organization_id
   billing_account                   = var.billing_account
   microseg_project_name             = var.microseg_project_name
   microseg_folder_name              = var.microseg_folder_name
+  csa_project_id                    = var.csa_project_id
   iam_secure_tag                    = var.iam_secure_tag
   vpc_network_name                  = var.vpc_network_name
   primary_network_region            = var.primary_network_region

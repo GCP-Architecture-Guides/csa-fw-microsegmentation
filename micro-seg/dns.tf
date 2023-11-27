@@ -20,7 +20,7 @@
 resource "google_dns_managed_zone" "cloud_dns" {
   name       = "cloud-google-zone"
   dns_name   = "cloud.google.com."
-  project    = google_project.micro_seg_project.project_id
+  project    = local.csa_project_id
   visibility = "private"
   private_visibility_config {
     networks {
@@ -37,7 +37,7 @@ resource "google_dns_record_set" "spf" {
   managed_zone = google_dns_managed_zone.cloud_dns.name
   type         = "A"
   ttl          = 300
-  project      = google_project.micro_seg_project.project_id
+  project      = local.csa_project_id
   rrdatas      = ["199.36.153.8", "199.36.153.9", "199.36.153.10", "199.36.153.11"]
   depends_on   = [google_dns_managed_zone.cloud_dns]
 }
@@ -46,7 +46,7 @@ resource "google_dns_record_set" "spf" {
 resource "google_dns_managed_zone" "private_zone" {
   name       = "private-zone"
   dns_name   = "microseg.private."
-  project    = google_project.micro_seg_project.project_id
+  project    = local.csa_project_id
   visibility = "private"
   private_visibility_config {
     networks {
@@ -61,7 +61,7 @@ resource "google_dns_record_set" "pri_ilb_pplapp_middleware" {
   managed_zone = google_dns_managed_zone.private_zone.name
   type         = "A"
   ttl          = 300
-  project      = google_project.micro_seg_project.project_id
+  project      = local.csa_project_id
   rrdatas      = ["${google_compute_forwarding_rule.pri_ilb_pplapp_middleware_rule.ip_address}"]
   depends_on = [google_dns_managed_zone.private_zone,
     google_compute_forwarding_rule.pri_ilb_pplapp_middleware_rule,
@@ -74,7 +74,7 @@ resource "google_dns_record_set" "sec_ilb_pplapp_middleware" {
   managed_zone = google_dns_managed_zone.private_zone.name
   type         = "A"
   ttl          = 300
-  project      = google_project.micro_seg_project.project_id
+  project      = local.csa_project_id
   rrdatas      = ["${google_compute_forwarding_rule.sec_ilb_pplapp_middleware_rule.ip_address}"]
   depends_on = [google_dns_managed_zone.private_zone,
     google_compute_forwarding_rule.sec_ilb_pplapp_middleware_rule,
@@ -89,7 +89,7 @@ resource "google_dns_record_set" "sec_ilb_pplapp_sqldb_microseg" {
   managed_zone = google_dns_managed_zone.private_zone.name
   type         = "A"
   ttl          = 300
-  project      = google_project.micro_seg_project.project_id
+  project      = local.csa_project_id
   rrdatas      = ["${google_sql_database_instance.private_sql_instance.ip_address.0.ip_address}"]
   depends_on = [
     google_dns_managed_zone.private_zone,
@@ -103,7 +103,7 @@ resource "google_dns_record_set" "sec_ilb_pplapp_sqldb_microseg" {
 resource "google_dns_managed_zone" "google_apis" {
   name       = "google-apis"
   dns_name   = "googleapis.com."
-  project    = google_project.micro_seg_project.project_id
+  project    = local.csa_project_id
   visibility = "private"
   private_visibility_config {
     networks {
@@ -120,7 +120,7 @@ resource "google_dns_record_set" "google_apis_1" {
   managed_zone = google_dns_managed_zone.google_apis.name
   type         = "A"
   ttl          = 300
-  project      = google_project.micro_seg_project.project_id
+  project      = local.csa_project_id
   rrdatas      = ["199.36.153.4", "199.36.153.5", "199.36.153.6", "199.36.153.7"]
   depends_on   = [google_dns_managed_zone.google_apis]
 }
@@ -131,7 +131,7 @@ resource "google_dns_record_set" "google_apis_2" {
   managed_zone = google_dns_managed_zone.google_apis.name
   type         = "CNAME"
   ttl          = 300
-  project      = google_project.micro_seg_project.project_id
+  project      = local.csa_project_id
   rrdatas      = ["restricted.googleapis.com."]
   depends_on   = [google_dns_managed_zone.google_apis]
 }

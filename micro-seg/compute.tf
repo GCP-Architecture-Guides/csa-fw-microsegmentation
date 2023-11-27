@@ -21,7 +21,7 @@
 # Instance template for primary region presentation layer
 resource "google_compute_instance_template" "pri_insttmpl_pplapp_presentation" {
   name    = "insttmpl-pplapp-presentation-${var.primary_network_region}"
-  project = google_project.micro_seg_project.project_id
+  project = local.csa_project_id
 
   provider = google-beta
   shielded_instance_config {
@@ -70,7 +70,7 @@ resource "google_compute_instance_template" "pri_insttmpl_pplapp_presentation" {
 resource "null_resource" "pri_insttmpl_pplapp_presentation" {
   triggers = {
     region    = var.primary_network_region
-    project   = "${google_project.micro_seg_project.project_id}"
+    project   = "${local.csa_project_id}"
     subnet    = "${google_compute_subnetwork.primary_presentation_subnetwork.id}"
     tag_key   = "${google_tags_tag_key.key.id}"
     tag_value = "${google_tags_tag_value.pri_ppl_value.id}"
@@ -126,7 +126,7 @@ resource "null_resource" "pri_insttmpl_pplapp_presentation" {
 
 # Instance group manager for primary region presentation layer
 resource "google_compute_region_instance_group_manager" "pri_instgrp_pplapp_presentation" {
-  project = google_project.micro_seg_project.project_id
+  project = local.csa_project_id
 
   name     = "instgrp-pplapp-presentation-${var.primary_network_region}"
   provider = google-beta
@@ -138,7 +138,7 @@ resource "google_compute_region_instance_group_manager" "pri_instgrp_pplapp_pres
     port = 80
   }
   version {
-    instance_template = "projects/${google_project.micro_seg_project.project_id}/global/instanceTemplates/insttmpl-pplapp-presentation-${var.primary_network_region}"
+    instance_template = "projects/${local.csa_project_id}/global/instanceTemplates/insttmpl-pplapp-presentation-${var.primary_network_region}"
     # google_compute_instance_template.pri_insttmpl_pplapp_presentation.id
     #    name              = "primary"
   }
@@ -167,7 +167,7 @@ resource "google_compute_region_instance_group_manager" "pri_instgrp_pplapp_pres
 # Instance template for primary region middleware layer
 resource "google_compute_instance_template" "pri_insttmpl_pplapp_middleware" {
   name    = "insttmpl-pplapp-middleware-${var.primary_network_region}"
-  project = google_project.micro_seg_project.project_id
+  project = local.csa_project_id
 
   provider = google-beta
   #  tags     = ["http-server"]
@@ -208,7 +208,7 @@ resource "google_compute_instance_template" "pri_insttmpl_pplapp_middleware" {
   }
   metadata = {
     DB_SEC  = "${google_secret_manager_secret.sql_db_user_password.secret_id}"
-    PROJ_ID = "${google_project.micro_seg_project.project_id}"
+    PROJ_ID = "${local.csa_project_id}"
   }
   depends_on = [
     google_compute_network.primary_network,
@@ -227,7 +227,7 @@ resource "google_compute_instance_template" "pri_insttmpl_pplapp_middleware" {
 resource "null_resource" "pri_insttmpl_pplapp_middleware" {
   triggers = {
     region    = var.primary_network_region
-    project   = "${google_project.micro_seg_project.project_id}"
+    project   = "${local.csa_project_id}"
     subnet    = "${google_compute_subnetwork.primary_middleware_subnetwork.id}"
     tag_key   = "${google_tags_tag_key.key.id}"
     tag_value = "${google_tags_tag_value.pri_mdwl_value.id}"
@@ -283,7 +283,7 @@ resource "null_resource" "pri_insttmpl_pplapp_middleware" {
 
 # Instance group manager for primary region middleware layer
 resource "google_compute_region_instance_group_manager" "pri_instgrp_pplapp_middleware" {
-  project = google_project.micro_seg_project.project_id
+  project = local.csa_project_id
 
   name     = "instgrp-pplapp-middleware-${var.primary_network_region}"
   provider = google-beta
@@ -295,7 +295,7 @@ resource "google_compute_region_instance_group_manager" "pri_instgrp_pplapp_midd
     port = 80
   }
   version {
-    instance_template = "projects/${google_project.micro_seg_project.project_id}/global/instanceTemplates/insttmpl-pplapp-middleware-${var.primary_network_region}"
+    instance_template = "projects/${local.csa_project_id}/global/instanceTemplates/insttmpl-pplapp-middleware-${var.primary_network_region}"
     # google_compute_instance_template.pri_insttmpl_pplapp_middleware.id
     #    name              = "primary"
   }
@@ -332,7 +332,7 @@ resource "google_compute_region_instance_group_manager" "pri_instgrp_pplapp_midd
 # Instance template for secondary region presentation layer
 resource "google_compute_instance_template" "sec_insttmpl_pplapp_presentation" {
   name    = "insttmpl-pplapp-presentation-${var.secondary_network_region}"
-  project = google_project.micro_seg_project.project_id
+  project = local.csa_project_id
 
   provider = google-beta
   #  tags     = ["http-server"]
@@ -388,7 +388,7 @@ resource "google_compute_instance_template" "sec_insttmpl_pplapp_presentation" {
 resource "null_resource" "sec_insttmpl_pplapp_presentation" {
   triggers = {
     region    = var.secondary_network_region
-    project   = "${google_project.micro_seg_project.project_id}"
+    project   = "${local.csa_project_id}"
     subnet    = "${google_compute_subnetwork.secondary_presentation_subnetwork.id}"
     tag_key   = "${google_tags_tag_key.key.id}"
     tag_value = "${google_tags_tag_value.sec_ppl_value.id}"
@@ -443,7 +443,7 @@ resource "null_resource" "sec_insttmpl_pplapp_presentation" {
 
 # Instance group manager for secondary region presentation layer
 resource "google_compute_region_instance_group_manager" "sec_instgrp_pplapp_presentation" {
-  project = google_project.micro_seg_project.project_id
+  project = local.csa_project_id
 
   name     = "instgrp-pplapp-presentation-${var.secondary_network_region}"
   provider = google-beta
@@ -455,7 +455,7 @@ resource "google_compute_region_instance_group_manager" "sec_instgrp_pplapp_pres
     port = 80
   }
   version {
-    instance_template = "projects/${google_project.micro_seg_project.project_id}/global/instanceTemplates/insttmpl-pplapp-presentation-${var.secondary_network_region}"
+    instance_template = "projects/${local.csa_project_id}/global/instanceTemplates/insttmpl-pplapp-presentation-${var.secondary_network_region}"
 
     # google_compute_instance_template.sec_insttmpl_pplapp_presentation.id
   }
@@ -487,7 +487,7 @@ resource "google_compute_region_instance_group_manager" "sec_instgrp_pplapp_pres
 # Instance template for secondary region middleware layer
 resource "google_compute_instance_template" "sec_insttmpl_pplapp_middleware" {
   name    = "insttmpl-pplapp-middleware-${var.secondary_network_region}"
-  project = google_project.micro_seg_project.project_id
+  project = local.csa_project_id
 
   provider = google-beta
   #  tags     = ["http-server"]
@@ -526,7 +526,7 @@ resource "google_compute_instance_template" "sec_insttmpl_pplapp_middleware" {
   }
   metadata = {
     DB_SEC  = "${google_secret_manager_secret.sql_db_user_password.secret_id}"
-    PROJ_ID = "${google_project.micro_seg_project.project_id}"
+    PROJ_ID = "${local.csa_project_id}"
   }
   depends_on = [
     google_compute_network.primary_network,
@@ -544,7 +544,7 @@ resource "google_compute_instance_template" "sec_insttmpl_pplapp_middleware" {
 resource "null_resource" "sec_insttmpl_pplapp_middleware" {
   triggers = {
     region    = var.secondary_network_region
-    project   = "${google_project.micro_seg_project.project_id}"
+    project   = "${local.csa_project_id}"
     subnet    = "${google_compute_subnetwork.secondary_middleware_subnetwork.id}"
     tag_key   = "${google_tags_tag_key.key.id}"
     tag_value = "${google_tags_tag_value.sec_mdwl_value.id}"
@@ -606,7 +606,7 @@ resource "null_resource" "sec_insttmpl_pplapp_middleware" {
 
 # Instance group manager for secondary region middleware layer
 resource "google_compute_region_instance_group_manager" "sec_instgrp_pplapp_middleware" {
-  project = google_project.micro_seg_project.project_id
+  project = local.csa_project_id
 
   name     = "instgrp-pplapp-middleware-${var.secondary_network_region}"
   provider = google-beta
@@ -618,7 +618,7 @@ resource "google_compute_region_instance_group_manager" "sec_instgrp_pplapp_midd
     port = 80
   }
   version {
-    instance_template = "projects/${google_project.micro_seg_project.project_id}/global/instanceTemplates/insttmpl-pplapp-middleware-${var.secondary_network_region}"
+    instance_template = "projects/${local.csa_project_id}/global/instanceTemplates/insttmpl-pplapp-middleware-${var.secondary_network_region}"
 
     # google_compute_instance_template.sec_insttmpl_pplapp_middleware.id
   }

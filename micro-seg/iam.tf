@@ -19,38 +19,42 @@
 
 #Create the service Account primary presentation
 resource "google_service_account" "primary_sa_pplapp_presentation" {
-  project      = google_project.micro_seg_project.project_id
+  project      = local.csa_project_id
   account_id   = "sa-pplapp-ppt-${var.primary_network_region}"
   display_name = "Compute service account"
+  depends_on = [time_sleep.wait_enable_service_api]
 }
 
 
 #Create the service Account primary middleware
 resource "google_service_account" "primary_sa_pplapp_middleware" {
-  project      = google_project.micro_seg_project.project_id
+  project      = local.csa_project_id
   account_id   = "sa-pplapp-mdw-${var.primary_network_region}"
   display_name = "Compute service account to access MySQL pwd"
+  depends_on = [time_sleep.wait_enable_service_api]
 }
 
 
 #Create the service Account secondary  presentation
 resource "google_service_account" "secondary_sa_pplapp_presentation" {
-  project      = google_project.micro_seg_project.project_id
+  project      = local.csa_project_id
   account_id   = "sa-pplapp-ppt-${var.secondary_network_region}"
   display_name = "Compute service account"
+  depends_on = [time_sleep.wait_enable_service_api]
 }
 
 #Create the service Account secondary  middleware
 resource "google_service_account" "secondary_sa_pplapp_middleware" {
-  project      = google_project.micro_seg_project.project_id
+  project      = local.csa_project_id
   account_id   = "sa-pplapp-mdw-${var.secondary_network_region}"
   display_name = "Compute service account to access MySQL pwd"
+  depends_on = [time_sleep.wait_enable_service_api]
 }
 
 
 resource "google_project_iam_member" "compute_project_member" {
-  project    = google_project.micro_seg_project.project_id
+  project    = local.csa_project_id
   role       = "roles/compute.serviceAgent"
-  member     = "serviceAccount:${google_project.micro_seg_project.number}@cloudservices.gserviceaccount.com"
+  member     = "serviceAccount:${local.csa_project_number}@cloudservices.gserviceaccount.com"
   depends_on = [time_sleep.wait_enable_service_api]
 }

@@ -16,47 +16,44 @@
 ##  This code creates demo environment for CSA Network Firewall microsegmentation  ##
 ##  This demo code is not built for production workload ##
 
+locals {
+#  create_new_project
+csa_project_id = var.create_new_project ? "${var.microseg_project_name}-${random_id.random_suffix.hex}" : var.csa_project_id
+csa_project_number =  "${data.google_project.project.number}"
+}
+
+
+data "google_project" "project" {
+  project_id = var.create_new_project ? "${var.microseg_project_name}-${random_id.random_suffix.hex}" : var.csa_project_id
+  depends_on = [google_project.micro_seg_project]
+}
 
 
 resource "random_id" "random_suffix" {
   byte_length = 4
 }
 
-resource "null_resource" "unset_project_in_cloudshell" {
-  triggers = {
-    always_run = "${timestamp()}"
-  }
-
-  provisioner "local-exec" {
-    command = <<EOT
-  gcloud config unset project
-  EOT
-  }
-
-}
-
 
 
 # Create Folder in GCP Organization
 resource "google_folder" "micro_seg_folder" {
+  count      = var.create_new_project ? 1 : 0
   display_name = "${var.microseg_folder_name}-${random_id.random_suffix.hex}"
   parent       = "organizations/${var.organization_id}"
-  depends_on   = [resource.null_resource.unset_project_in_cloudshell]
 }
 
 
 # Create the project
 resource "google_project" "micro_seg_project" {
+  count      = var.create_new_project ? 1 : 0
   billing_account = var.billing_account
   #org_id          = var.organization_id    # Only one of `org_id` or `folder_id` may be specified
-  folder_id   = google_folder.micro_seg_folder.name # Only one of `org_id` or `folder_id` may be specified
+  folder_id   = google_folder.micro_seg_folder[count.index].name # Only one of `org_id` or `folder_id` may be specified
   name        = var.microseg_project_name
-  project_id  = "${var.microseg_project_name}-${random_id.random_suffix.hex}"
+  project_id  = local.csa_project_id
+  #"${var.microseg_project_name}-${random_id.random_suffix.hex}"
   skip_delete = var.skip_delete
-  depends_on = [resource.null_resource.unset_project_in_cloudshell,
-    google_folder.micro_seg_folder,
-  ]
-
+  depends_on = [google_folder.micro_seg_folder]
 }
 
 
@@ -74,9 +71,10 @@ resource "google_project_service" "armor_api_service" {
   ])
 
   service                    = each.key
-  project                    = google_project.micro_seg_project.project_id
+  project                    = local.csa_project_id
   disable_on_destroy         = false
   disable_dependent_services = true
+  depends_on = [google_project.micro_seg_project]
 
 }
 
@@ -92,7 +90,7 @@ resource "time_sleep" "wait_enable_service_api" {
 
 # health check
 resource "google_compute_health_check" "default" {
-  project = google_project.micro_seg_project.project_id
+  project = local.csa_project_id
 
   name                = "health-check"
   provider            = google-beta

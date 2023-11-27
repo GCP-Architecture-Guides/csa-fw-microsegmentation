@@ -22,7 +22,7 @@ resource "google_compute_network_firewall_policy" "primary" {
   name = "fwpol-microseg"
 
   description = "Global network firewall policy for micro segmentation architecture"
-  project     = google_project.micro_seg_project.project_id
+  project     = local.csa_project_id
 
   depends_on = [
     time_sleep.wait_enable_service_api,
@@ -34,13 +34,13 @@ resource "google_compute_network_firewall_policy_association" "primary" {
   name              = "association"
   attachment_target = google_compute_network.primary_network.id
   firewall_policy   = google_compute_network_firewall_policy.primary.name
-  project           = google_project.micro_seg_project.project_id
+  project           = local.csa_project_id
 }
 
 
 # allow access from health check ranges
 resource "google_compute_network_firewall_policy_rule" "allow_health_check_glb" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "allow"
   description     = "Allow access from Health Check and GLB to Web Servers"
   direction       = "INGRESS"
@@ -92,7 +92,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_health_check_glb" 
 
 # Allow access from Identity-Aware Proxy
 resource "google_compute_network_firewall_policy_rule" "allow_iap" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "allow"
   description     = "Allow access from Identity-Aware Proxy"
   direction       = "INGRESS"
@@ -145,7 +145,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_iap" {
 
 # Allow access from Internal Load Balancer
 resource "google_compute_network_firewall_policy_rule" "allow_ilb" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "allow"
   description     = "Allow access from Presentation to Middleware HTTP LBs"
   direction       = "EGRESS"
@@ -193,7 +193,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_ilb" {
 
 # Allow access from HTTP LB Proxy subnet to Middleware 
 resource "google_compute_network_firewall_policy_rule" "pri_allow_http_lb_proxy" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "allow"
   description     = "Allow access from HTTP LB Proxy subnet to Middleware Primary"
   direction       = "INGRESS"
@@ -231,7 +231,7 @@ resource "google_compute_network_firewall_policy_rule" "pri_allow_http_lb_proxy"
 
 # Allow access from HTTP LB Proxy subnet to Middleware 
 resource "google_compute_network_firewall_policy_rule" "sec_allow_http_lb_proxy" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "allow"
   description     = "Allow access from HTTP LB Proxy subnet to Middleware Secondary"
   direction       = "INGRESS"
@@ -271,7 +271,7 @@ resource "google_compute_network_firewall_policy_rule" "sec_allow_http_lb_proxy"
 
 # Network Firewall rule to allow the Middleware Layer to communicate with the SQL DB 
 resource "google_compute_network_firewall_policy_rule" "allow_fwpol_microseg_db" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "allow"
   description     = "Rule to allow access from middleware to database"
   direction       = "EGRESS"
@@ -315,7 +315,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_fwpol_microseg_db"
 
 # Network Firewall rule for your instances to download packages private access 
 resource "google_compute_network_firewall_policy_rule" "allow_private_access" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "allow"
   description     = "Rule to allow VMs access to Private Google APIs"
   direction       = "EGRESS"
@@ -364,7 +364,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_private_access" {
 
 # Network Firewall rule for your instances to download packages private access 
 resource "google_compute_network_firewall_policy_rule" "allow_restricted_access" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "allow"
   description     = "Rule to allow VMs access to Restricted Google APIs"
   direction       = "EGRESS"
@@ -414,7 +414,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_restricted_access"
 
 ## https://github.com/hashicorp/terraform-provider-google/issues/13688
 resource "google_compute_network_firewall_policy_rule" "allow_restricted_access_php" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "allow"
   description     = "Allow access to install PHP Google Client Libraries"
   direction       = "EGRESS"
@@ -461,7 +461,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_restricted_access_
 
 # Deny ingress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv4" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "deny"
   description     = "deny-ingress-ipv4"
   direction       = "INGRESS"
@@ -488,7 +488,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv4" {
 
 # Deny ingress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "deny"
   description     = "deny-ingress-ipv6"
   direction       = "INGRESS"
@@ -514,7 +514,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6" {
 
 # Deny egress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv4" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "deny"
   description     = "deny-ingress-ipv4"
   direction       = "EGRESS"
@@ -541,7 +541,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv4" {
 
 # Deny egress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv6" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "deny"
   description     = "deny-ingress-ipv6"
   direction       = "EGRESS"
@@ -571,7 +571,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv6" {
 
 # Deny ingress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv4_quarantine" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "deny"
   description     = "deny-ingress-ipv4-quarantine"
   direction       = "INGRESS"
@@ -601,7 +601,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv4_quaran
 
 # Deny ingress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6_quarantine" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "deny"
   description     = "deny-ingress-ipv6-quarantine"
   direction       = "INGRESS"
@@ -632,7 +632,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6_quaran
 
 # Deny egress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv4_quarantine" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "deny"
   description     = "deny-ingress-ipv4-quarantine"
   direction       = "EGRESS"
@@ -664,7 +664,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv4_quarant
 
 # Deny egress trafic
 resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv6_quarantine" {
-  project         = google_project.micro_seg_project.project_id
+  project         = local.csa_project_id
   action          = "deny"
   description     = "deny-ingress-ipv6-quarantine"
   direction       = "EGRESS"

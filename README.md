@@ -1,6 +1,7 @@
 ```
 This is not an officially supported Google product.
-This code creates PoC demo environment for CSA Network Firewall microsegmentation. This demo code is not built for production workload. 
+This code creates PoC demo environment for CSA Network Firewall microsegmentation. 
+This demo code is not built for production workload. 
 ```
 
 # Network Firewall Microsegmentation  Architecture Guide
@@ -52,7 +53,19 @@ A Web Application Firewall (WAF) implementation is included to demonstrate how w
 
 ## Terraform Deployment Instructions
 
-1. Sign in to your organization and assign yourself the following roles:
+1. Open up Cloud shell and clone the [git repository](https://github.com/GoogleCloudPlatform/csa-fw-microsegmentation) using the command below.
+
+```
+git clone https://github.com/GCP-Architecture-Guides/csa-fw-microsegmentation.git
+```
+
+2. Navigate to the csa-fw-microsegmentation folder.
+
+```
+cd csa-fw-microsegmentation
+```
+
+3. ***Note: Skip to step-7 to use an existing project.*** Sign in to your organization and assign yourself the following roles:
 
 - Billing Account User
 - Folder Creator
@@ -62,19 +75,7 @@ A Web Application Firewall (WAF) implementation is included to demonstrate how w
 The following steps should be executed in Cloud Shell in the Google Cloud Console. Unset any project using 'gcloud config unset project'
 
 
-2. Open up Cloud shell and Unset any project using 'gcloud config unset project'. Clone the [git repository](https://github.com/GoogleCloudPlatform/csa-fw-microsegmentation) using the command below.
-
-```
-git clone https://github.com/GCP-Architecture-Guides/csa-fw-microsegmentation.git
-```
-
-3. Navigate to the csa-fw-microsegmentation folder.
-
-```
-cd csa-fw-microsegmentation
-```
-
-4. Provide the organization id and billing_account for project creation to deploy the architecture resources in the terraform variables. Edits can also be made directly in [variable.tf](variable.tf) file.
+5. Provide the organization id and billing_account for project creation to deploy the architecture resources in the terraform variables. Edits can also be made directly in [variable.tf](variable.tf) file. Note for folder and projectXXXXX
 
 ```
 export TF_VAR_organization_id=[YOUR_ORGANIZATION_ID]
@@ -82,16 +83,30 @@ export TF_VAR_organization_id=[YOUR_ORGANIZATION_ID]
 export TF_VAR_billing_account=[YOUR_BILLING_ACCOUNT]
 ```
 
-5. To find your organization id, run the following command.
+6. To find your organization id, run the following command.
 
 ```
 gcloud projects get-ancestors [YOUR_PROJECT_ID]
 ```
 
-6. While in the csa-fw-microsegmentation, run the commands below in order. 
+7. ***Optional Step*** to use an existing project. Sign in to your organization and assign yourself the following roles:
+
+- Policy Tag Admin role at project level
+- Editor role on the project to be used for the deployment. 
+- The terraform assigns Storage Object Viewer role to the SQL database service account at project level.
+
+8. ***Optional Step*** to use an existing project. Provide the project_id to be used to provision resources Edits can also be made directly in [variable.tf](variable.tf) file.
 
 ```
-gcloud config unset project
+export TF_VAR_csa_project_id=[YOUR_EXISTING_PROJECT_ID]
+export TF_VAR_create_new_project=false
+
+```
+
+9. While in the csa-fw-microsegmentation, run the commands below in order. 
+
+```
+gcloud config unset project # to unset any set project
 
 terraform init
 
@@ -108,9 +123,9 @@ terraform apply
 terraform apply
 ```
 
-Note: All the other variables are given a default value. If you wish to change, update the corresponding variables in the variable.tf file.
+Note: All the other variables are given a default value. If you wish to change, update the corresponding variables in the [variable.tf](variable.tf) file.
 
-7. To clean-up and destroy all the created resources run the following command from the root folder of this repo.
+8. To clean-up and destroy all the created resources run the following command from the root folder of this repo.
 
 ```
 terraform destroy

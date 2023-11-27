@@ -21,7 +21,7 @@
 # Cloud Armor Security Policy
 resource "google_compute_security_policy" "armor_microseg" {
   name        = "armor-microseg"
-  project     = google_project.micro_seg_project.project_id
+  project     = local.csa_project_id
   description = "Cloud Armor policy for microseg architecture"
 
   # Only works if you have CA managed protection plus subscription

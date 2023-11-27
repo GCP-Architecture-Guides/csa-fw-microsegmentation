@@ -22,14 +22,14 @@
 # Creating iam taging to compute instances pri_instgrp_pplapp_presentation
 resource "null_resource" "vpc_peering_setup" {
   triggers = {
-    project      = google_project.micro_seg_project.project_id
+    project      = local.csa_project_id
     network_name = "${var.vpc_network_name}"
   }
 
   provisioner "local-exec" {
     command     = <<EOT
-gcloud compute addresses create google-managed-services-${var.vpc_network_name} --global --purpose=VPC_PEERING  --addresses=${var.primary_database_subnetwork} --prefix-length=24 --network=projects/${google_project.micro_seg_project.project_id}/global/networks/${var.vpc_network_name} --project=${google_project.micro_seg_project.project_id}
-gcloud services vpc-peerings connect --service=servicenetworking.googleapis.com --ranges=google-managed-services-${var.vpc_network_name} --network=${var.vpc_network_name} --project=${google_project.micro_seg_project.project_id}
+gcloud compute addresses create google-managed-services-${var.vpc_network_name} --global --purpose=VPC_PEERING  --addresses=${var.primary_database_subnetwork} --prefix-length=24 --network=projects/${local.csa_project_id}/global/networks/${var.vpc_network_name} --project=${local.csa_project_id}
+gcloud services vpc-peerings connect --service=servicenetworking.googleapis.com --ranges=google-managed-services-${var.vpc_network_name} --network=${var.vpc_network_name} --project=${local.csa_project_id}
     EOT
     working_dir = path.module
   }
@@ -50,7 +50,7 @@ gcloud services vpc-peerings connect --service=servicenetworking.googleapis.com 
 
 # Create DB Instance
 resource "google_sql_database_instance" "private_sql_instance" {
-  project = google_project.micro_seg_project.project_id
+  project = local.csa_project_id
 
   deletion_protection = false
   name                = "sub-sqldb-microseg"
@@ -108,7 +108,7 @@ resource "google_sql_database_instance" "private_sql_instance" {
 
 
 resource "google_sql_database" "mydb" {
-  project  = google_project.micro_seg_project.project_id
+  project  = local.csa_project_id
   instance = google_sql_database_instance.private_sql_instance.name
   name     = "mydb"
   depends_on = [
@@ -120,7 +120,7 @@ resource "google_sql_database" "mydb" {
 
 
 resource "google_sql_user" "db_password" {
-  project  = google_project.micro_seg_project.project_id
+  project  = local.csa_project_id
   instance = google_sql_database_instance.private_sql_instance.name
   name     = "root"
   password = google_secret_manager_secret_version.sql_db_user_password.secret_data
@@ -136,7 +136,7 @@ resource "google_sql_user" "db_password" {
 
 # Add required roles to the SQL service accounts for storage object import
 resource "google_project_iam_member" "sql_object_access" {
-  project    = google_project.micro_seg_project.project_id
+  project    = local.csa_project_id
   role       = "roles/storage.objectViewer"
   member     = "serviceAccount:${google_sql_database_instance.private_sql_instance.service_account_email_address}"
   depends_on = [google_sql_database_instance.private_sql_instance]
@@ -145,10 +145,10 @@ resource "google_project_iam_member" "sql_object_access" {
 
 #Creating the bucket for smple sql data
 resource "google_storage_bucket" "sample_data" {
-  name                        = "sample-data-${google_project.micro_seg_project.project_id}"
+  name                        = "sample-data-${local.csa_project_id}"
   location                    = "us-central1"
   force_destroy               = true
-  project                     = google_project.micro_seg_project.project_id
+  project                     = local.csa_project_id
   uniform_bucket_level_access = true
   depends_on = [
     time_sleep.wait_enable_service_api,
@@ -176,13 +176,13 @@ resource "time_sleep" "wait_sql_sa_role" {
 # Importing data from storage object to the SQL Database
 resource "null_resource" "upload_db_data" {
   triggers = {
-    project      = google_project.micro_seg_project.project_id
+    project      = local.csa_project_id
     network_name = "${var.vpc_network_name}"
   }
 
   provisioner "local-exec" {
     command     = <<EOT
-gcloud sql import sql ${google_sql_database_instance.private_sql_instance.name} gs://${google_storage_bucket.sample_data.name}/${google_storage_bucket_object.db_sample_data.name} --database=${google_sql_database.mydb.name} --project=${google_project.micro_seg_project.project_id}
+gcloud sql import sql ${google_sql_database_instance.private_sql_instance.name} gs://${google_storage_bucket.sample_data.name}/${google_storage_bucket_object.db_sample_data.name} --database=${google_sql_database.mydb.name} --project=${local.csa_project_id}
     EOT
     working_dir = path.module
   }

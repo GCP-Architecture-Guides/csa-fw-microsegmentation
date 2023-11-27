@@ -34,6 +34,13 @@ variable "microseg_project_name" {
 
 }
 
+variable "create_new_project" {
+    
+}
+
+variable "csa_project_id" {
+
+}
 
 variable "iam_secure_tag" {
 }

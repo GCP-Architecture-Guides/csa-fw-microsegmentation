@@ -25,14 +25,28 @@
 variable "organization_id" {
   type        = string
   description = "Organization ID to add tags at Org level"
-  default     = "XXXXXX" ## Update the org id
+  default     = "XXXXXXXXXXXX"
 }
 
 variable "billing_account" {
   type        = string
   description = "billing account required"
-  default     = "XXXXX-XXXXX-XXXXXX" ## Update the billing account
+  default     = "XXXXX-XXXXX-XXXXX"
 }
+
+
+variable "create_new_project" {
+  description = " If true, the Terraform will create a new project. If false, will use an existing project"
+  type        = bool
+  default     = true ## update to 'false' to use an existing project
+}
+
+variable "csa_project_id" {
+  type        = string
+  description = "Project id to deploy resources"
+  default     = "XXXXXXXXXXXXX" ## update to use an existing project
+}
+
 
 /*****************************
 RECOMMENDED DEFAULTS - DO NOT CHANGE
@@ -43,13 +57,13 @@ unless you really really want to :)
 
 variable "microseg_folder_name" {
   type        = string
-  description = "Project ID to deploy resources"
+  description = "Parent folder name for resource project"
   default     = "CSA-Micro-Segment"
 }
 
 variable "microseg_project_name" {
   type        = string
-  description = "Project ID to deploy resources"
+  description = "Project name to deploy resources"
   default     = "csa-micro-segment"
 }
 

@@ -19,7 +19,7 @@
 resource "google_network_security_address_group" "private_google_apis" {
 
   name        = "private-google-apis"
-  parent      = google_project.micro_seg_project.id
+  parent      = "projects/${local.csa_project_id}"
   location    = "global"
   description = "Private Google APIs"
   type        = "IPV4"
@@ -34,7 +34,7 @@ resource "google_network_security_address_group" "private_google_apis" {
 resource "google_network_security_address_group" "restricted_google_apis" {
 
   name        = "restricted-google-apis"
-  parent      = google_project.micro_seg_project.id
+  parent      = "projects/${local.csa_project_id}"
   location    = "global"
   description = "Restricted Google APIs"
   type        = "IPV4"
@@ -49,7 +49,7 @@ resource "google_network_security_address_group" "restricted_google_apis" {
 resource "google_network_security_address_group" "hc_glb_grp" {
 
   name        = "hc-glb-grp"
-  parent      = google_project.micro_seg_project.id
+  parent      = "projects/${local.csa_project_id}"
   location    = "global"
   description = "Global Load Balancer and Health Check Source IPs"
   type        = "IPV4"
@@ -64,7 +64,7 @@ resource "google_network_security_address_group" "hc_glb_grp" {
 resource "google_network_security_address_group" "iap" {
 
   name        = "iap"
-  parent      = google_project.micro_seg_project.id
+  parent      = "projects/${local.csa_project_id}"
   location    = "global"
   description = "Identity-Aware Proxy Source IPs"
   type        = "IPV4"
@@ -80,7 +80,7 @@ resource "google_network_security_address_group" "iap" {
 resource "google_network_security_address_group" "pplapp_middleware_ilb_grp" {
 
   name        = "pplapp-middleware-ilb-grp"
-  parent      = google_project.micro_seg_project.id
+  parent      = "projects/${local.csa_project_id}"
   location    = "global"
   description = "Internal Load Balancers for Middleware service"
   type        = "IPV4"
@@ -95,7 +95,7 @@ resource "google_network_security_address_group" "pplapp_middleware_ilb_grp" {
 
 resource "google_network_security_address_group" "primary_proxy_sub" {
   name        = "${var.primary_network_region}-proxy-sub"
-  parent      = google_project.micro_seg_project.id
+  parent      = "projects/${local.csa_project_id}"
   location    = "global"
   description = "Primary location proxy subnet"
   type        = "IPV4"
@@ -110,7 +110,7 @@ resource "google_network_security_address_group" "primary_proxy_sub" {
 resource "google_network_security_address_group" "secondary_proxy_sub" {
 
   name        = "${var.secondary_network_region}-proxy-sub"
-  parent      = google_project.micro_seg_project.id
+  parent      = "projects/${local.csa_project_id}"
   location    = "global"
   description = "Secondary location proxy subnet"
   type        = "IPV4"
@@ -124,7 +124,7 @@ resource "google_network_security_address_group" "secondary_proxy_sub" {
 resource "google_network_security_address_group" "pplapp_sqldb" {
 
   name        = "pplapp-sqldb"
-  parent      = google_project.micro_seg_project.id
+  parent      = "projects/${local.csa_project_id}"
   location    = "global"
   description = "SQL Database IP"
   type        = "IPV4"
