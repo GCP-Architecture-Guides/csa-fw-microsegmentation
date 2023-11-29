@@ -75,12 +75,12 @@ cd csa-fw-microsegmentation
 The following steps should be executed in Cloud Shell in the Google Cloud Console. Unset any project using 'gcloud config unset project'
 
 
-5. Provide the organization id and billing_account for project creation to deploy the architecture resources in the terraform variables. Edits can also be made directly in [variable.tf](variable.tf) file. Note for folder and projectXXXXX
+5. Provide the organization id and billing_account for project creation to deploy the architecture resources in the terraform variables. Edits can also be made directly in [variable.tf](variable.tf) file. The terraform will create a folder (CSA-Micro-Segment-xxxx) and a project (csa-micro-segment-xxxx) for the resources.
 
 ```
-export TF_VAR_organization_id=[YOUR_ORGANIZATION_ID]
+export TF_VAR_organization_id=[YOUR_ORGANIZATION_ID] # not required if using an existing project
 
-export TF_VAR_billing_account=[YOUR_BILLING_ACCOUNT]
+export TF_VAR_billing_account=[YOUR_BILLING_ACCOUNT] # not required if using an existing project
 ```
 
 6. To find your organization id, run the following command.
@@ -113,6 +113,8 @@ terraform init
 terraform plan
 
 terraform apply
+
+Note: This will take approximately 25-30 minutes to complete.
 ```
 
 > If prompted, authorize the API call.
@@ -125,7 +127,12 @@ terraform apply
 
 Note: All the other variables are given a default value. If you wish to change, update the corresponding variables in the [variable.tf](variable.tf) file.
 
-8. To clean-up and destroy all the created resources run the following command from the root folder of this repo.
+9. The following image shows the firewall policy that will be applied to the project's VPC.
+
+![image](./images/micro-seg-fw-policy.png)
+    
+   
+11. To clean-up and destroy all the created resources run the following command from the root folder of this repo.
 
 ```
 terraform destroy
