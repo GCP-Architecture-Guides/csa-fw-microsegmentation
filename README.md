@@ -8,7 +8,7 @@ This demo code is not built for production workload.
 
 # Summary
 
-Network Firewall microsegmentation is a method used to apply the concept of least privilege to network elements in the cloud. It has the benefit of reducing the threat surface to only what is necessary for valid system functions, and can reduce lateral movement risk in the case of a breach. This architecture applies the microsegmentation concept to sources, destinations, protocols, and ports within the Google Cloud environment.
+Network Firewall microsegmentation is a method used to apply the concept of least privilege to network elements in the cloud. It has the benefit of reducing the threat surface to only what is necessary for valid system functions, and can reduce lateral movement and data exfiltration risk in the case of a breach. This architecture applies the microsegmentation concept to sources, destinations, protocols, and ports within the Google Cloud environment.
 
 
 # Architecture 
@@ -65,7 +65,7 @@ git clone https://github.com/GCP-Architecture-Guides/csa-fw-microsegmentation.gi
 cd csa-fw-microsegmentation
 ```
 
-3. ***Note: Skip to step-7 to use an existing project.*** Sign in to your organization and assign yourself the following roles:
+3. ***Note: Skip to step-5 to use an existing project.*** Sign in to your organization and assign yourself the following roles:
 
 - Billing Account User
 - Folder Creator
@@ -75,7 +75,9 @@ cd csa-fw-microsegmentation
 The following steps should be executed in Cloud Shell in the Google Cloud Console. Unset any project using 'gcloud config unset project'
 
 
-5. Provide the organization id and billing_account for project creation to deploy the architecture resources in the terraform variables. Edits can also be made directly in [variable.tf](variable.tf) file. The terraform will create a folder (CSA-Micro-Segment-xxxx) and a project (csa-micro-segment-xxxx) for the resources.
+4. Provide the organization id and billing_account for project creation to deploy the architecture resources in the terraform variables. Edits can also be made directly in [variable.tf](variable.tf) file. The terraform will create a folder (CSA-Micro-Segment-xxxx) and a project (csa-micro-segment) for the resources.
+   
+Note: All the other variables are given a default value. If you wish to change, update the corresponding variables in the [variable.tf](variable.tf) file.
 
 ```
 export TF_VAR_organization_id=[YOUR_ORGANIZATION_ID] # not required if using an existing project
@@ -83,19 +85,20 @@ export TF_VAR_organization_id=[YOUR_ORGANIZATION_ID] # not required if using an 
 export TF_VAR_billing_account=[YOUR_BILLING_ACCOUNT] # not required if using an existing project
 ```
 
-6. To find your organization id, run the following command.
+Note: To find your organization id, run the following command.
 
 ```
 gcloud projects get-ancestors [YOUR_PROJECT_ID]
 ```
 
-7. ***Optional Step*** to use an existing project. Sign in to your organization and assign yourself the following roles:
+5. ***Optional Step*** to use an existing project. Sign in to your organization and assign yourself the following roles:
 
 - Policy Tag Admin role at project level
 - Editor role on the project to be used for the deployment. 
 - The terraform assigns Storage Object Viewer role to the SQL database service account at project level.
 
-8. ***Optional Step*** to use an existing project. Provide the project_id to be used to provision resources Edits can also be made directly in [variable.tf](variable.tf) file.
+
+6. ***Optional Step*** to use an existing project. Provide the project_id to be used to provision resources Edits can also be made directly in [variable.tf](variable.tf) file.
 
 ```
 export TF_VAR_csa_project_id=[YOUR_EXISTING_PROJECT_ID]
@@ -103,40 +106,28 @@ export TF_VAR_create_new_project=false
 
 ```
 
-9. While in the csa-fw-microsegmentation, run the commands below in order. 
+7. While in the csa-fw-microsegmentation, run the commands below in order. 
 
 ```
 gcloud config unset project # to unset any set project
 
 terraform init
-
 terraform plan
-
 terraform apply
-
+```
 Note: This will take approximately 25-30 minutes to complete.
-```
 
-> If prompted, authorize the API call.
 
-    If you get an error message "Error: Provider produced inconsistent final plan", then re-run the "`terraform apply`" command to complete the deployment. This is a known Terraform bug.
-
-```
-terraform apply
-```
-
-Note: All the other variables are given a default value. If you wish to change, update the corresponding variables in the [variable.tf](variable.tf) file.
-
-9. The following image shows the firewall policy that will be applied to the project's VPC.
-
-![image](./images/micro-seg-fw-policy.png)
-    
-   
-11. To clean-up and destroy all the created resources run the following command from the root folder of this repo.
+8. To clean-up and destroy all the created resources run the following command from the root folder of this repo.
 
 ```
 terraform destroy
 ```
+
+The following image shows the firewall policy that will be applied to the project's VPC.
+
+![image](./images/micro-seg-fw-policy.png)
+    
 
 # Best Practices
 
