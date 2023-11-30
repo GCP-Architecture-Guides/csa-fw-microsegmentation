@@ -103,7 +103,6 @@ gcloud projects get-ancestors [YOUR_PROJECT_ID]
 ```
 export TF_VAR_csa_project_id=[YOUR_EXISTING_PROJECT_ID]
 export TF_VAR_create_new_project=false
-
 ```
 
 7. While in the csa-fw-microsegmentation, run the commands below in order. 
