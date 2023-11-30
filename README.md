@@ -8,7 +8,7 @@ This demo code is not built for production workload.
 
 # Summary
 
-Network Firewall microsegmentation is a method used to apply the concept of least privilege to network elements in the cloud. It has the benefit of reducing the threat surface to only what is necessary for valid system functions, and can reduce lateral movement and data exfiltration risk in the case of a breach. This architecture applies the microsegmentation concept to sources, destinations, protocols, and ports within the Google Cloud environment.
+Network Firewall microsegmentation is a method used to apply the concept of least privilege to network elements in the cloud. This technique reduces the network threat surface to only what is necessary for valid system functions. This helps reduce lateral movement and data exfiltration risks in the case of a breach. This architecture applies the microsegmentation concept to sources, destinations, protocols, and ports within the Google Cloud environment.
 
 
 # Architecture 
