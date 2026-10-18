@@ -51,9 +51,15 @@ A Web Application Firewall (WAF) implementation is included to demonstrate how w
 
 # Deployment
 
+## Prerequisites
+
+- **Terraform**: version `>= 1.3.0`
+- **Google Cloud SDK (`gcloud`)**: installed and authenticated
+- **Google Provider**: `hashicorp/google` and `hashicorp/google-beta` `>= 5.0`
+
 ## Terraform Deployment Instructions
 
-1. Open up Cloud shell and clone the [git repository](https://github.com/GoogleCloudPlatform/csa-fw-microsegmentation) using the command below.
+1. Open up Cloud shell and clone the [git repository](https://github.com/GCP-Architecture-Guides/csa-fw-microsegmentation) using the command below.
 
 ```
 git clone https://github.com/GCP-Architecture-Guides/csa-fw-microsegmentation.git

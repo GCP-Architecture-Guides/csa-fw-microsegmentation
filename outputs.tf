@@ -12,15 +12,15 @@
 ##  See the License for the specific language governing permissions and
 ##  limitations under the License.
 
-
 ##  This code creates demo environment for CSA Network Firewall microsegmentation  ##
 ##  This demo code is not built for production workload ##
 
-
 output "global_load_balancer_ip" {
-  value = module.micro_seg.global_load_balancer_ip
+  description = "Public URL for the external Global HTTP Load Balancer."
+  value       = module.micro_seg.global_load_balancer_ip
 }
 
 output "note" {
-  value = "The GLB should be activated in a few minutes"
+  description = "Deployment status notice."
+  value       = "The GLB should be activated in a few minutes"
 }

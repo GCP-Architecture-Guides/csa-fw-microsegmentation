@@ -12,41 +12,43 @@
 ##  See the License for the specific language governing permissions and
 ##  limitations under the License.
 
-
 ##  This code creates demo environment for CSA Network Firewall microsegmentation  ##
 ##  This demo code is not built for production workload ##
 
+# ==============================================================================
+# PRIVATE SERVICE NETWORKING (VPC PEERING FOR CLOUD SQL)
+# ==============================================================================
 
-
-
-# Creating iam taging to compute instances pri_instgrp_pplapp_presentation
-resource "null_resource" "vpc_peering_setup" {
-  triggers = {
-    project      = local.csa_project_id
-    network_name = "${var.vpc_network_name}"
-  }
-
-  provisioner "local-exec" {
-    command     = <<EOT
-gcloud compute addresses create google-managed-services-${var.vpc_network_name} --global --purpose=VPC_PEERING  --addresses=${var.primary_database_subnetwork} --prefix-length=24 --network=projects/${local.csa_project_id}/global/networks/${var.vpc_network_name} --project=${local.csa_project_id}
-gcloud services vpc-peerings connect --service=servicenetworking.googleapis.com --ranges=google-managed-services-${var.vpc_network_name} --network=${var.vpc_network_name} --project=${local.csa_project_id}
-    EOT
-    working_dir = path.module
-  }
-
-  provisioner "local-exec" {
-    when        = destroy
-    command     = <<EOT
-    gcloud compute addresses delete google-managed-services-${self.triggers.network_name} --project=${self.triggers.project} --global
-        EOT
-    working_dir = path.module
-  }
+# Reserved private IP range for VPC peering with Service Networking
+resource "google_compute_global_address" "private_ip_address" {
+  project       = local.csa_project_id
+  name          = "google-managed-services-${var.vpc_network_name}"
+  purpose       = "VPC_PEERING"
+  address_type  = "INTERNAL"
+  prefix_length = 24
+  address       = var.primary_database_subnetwork
+  network       = google_compute_network.primary_network.id
 
   depends_on = [
-    google_compute_network.primary_network
+    google_compute_network.primary_network,
+    time_sleep.wait_enable_service_api,
   ]
 }
 
+# Establish Private Service Networking connection for Cloud SQL
+resource "google_service_networking_connection" "private_vpc_connection" {
+  network                 = google_compute_network.primary_network.id
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
+
+  depends_on = [
+    google_compute_global_address.private_ip_address,
+  ]
+}
+
+# ==============================================================================
+# CLOUD SQL INSTANCE & DATABASE
+# ==============================================================================
 
 # Create DB Instance
 resource "google_sql_database_instance" "private_sql_instance" {
@@ -71,32 +73,15 @@ resource "google_sql_database_instance" "private_sql_instance" {
 
     ip_configuration {
       private_network                               = google_compute_network.primary_network.id
-      require_ssl                                   = false
+      ssl_mode                                      = "ALLOW_UNENCRYPTED_AND_ENCRYPTED"
       ipv4_enabled                                  = false
       enable_private_path_for_google_cloud_services = true
-      /*
-    psc_config {
-        psc_enabled = true
- #       allowed_consumer_projects = ["allowed-consumer-project-name"]
-      }
-
-      authorized_networks {
-        name  = google_compute_subnetwork.primary_middleware_subnetwork.name
-        value = google_compute_subnetwork.primary_middleware_subnetwork.ip_cidr_range
-      }
-
-      authorized_networks {
-        name  = google_compute_subnetwork.secondary_middleware_subnetwork.name
-        value = google_compute_subnetwork.secondary_middleware_subnetwork.ip_cidr_range
-      }
-      */
-
     }
   }
 
   depends_on = [
     time_sleep.wait_enable_service_api,
-    null_resource.vpc_peering_setup,
+    google_service_networking_connection.private_vpc_connection,
   ]
 
   timeouts {
@@ -106,18 +91,16 @@ resource "google_sql_database_instance" "private_sql_instance" {
   }
 }
 
-
 resource "google_sql_database" "mydb" {
   project  = local.csa_project_id
   instance = google_sql_database_instance.private_sql_instance.name
   name     = "mydb"
+
   depends_on = [
     time_sleep.wait_enable_service_api,
     google_sql_database_instance.private_sql_instance,
   ]
 }
-
-
 
 resource "google_sql_user" "db_password" {
   project  = local.csa_project_id
@@ -125,14 +108,11 @@ resource "google_sql_user" "db_password" {
   name     = "root"
   password = google_secret_manager_secret_version.sql_db_user_password.secret_data
 
-  depends_on = [time_sleep.wait_enable_service_api,
+  depends_on = [
+    time_sleep.wait_enable_service_api,
     google_sql_database_instance.private_sql_instance,
   ]
 }
-
-
-
-
 
 # Add required roles to the SQL service accounts for storage object import
 resource "google_project_iam_member" "sql_object_access" {
@@ -142,53 +122,52 @@ resource "google_project_iam_member" "sql_object_access" {
   depends_on = [google_sql_database_instance.private_sql_instance]
 }
 
-
-#Creating the bucket for smple sql data
+# Creating the bucket for sample sql data
 resource "google_storage_bucket" "sample_data" {
   name                        = "sample-data-${local.csa_project_id}"
   location                    = "us-central1"
   force_destroy               = true
   project                     = local.csa_project_id
   uniform_bucket_level_access = true
+
   depends_on = [
     time_sleep.wait_enable_service_api,
   ]
 }
 
-# Add zip file to the Cloud Function's source code bucket
+# Add sql data file to storage bucket
 resource "google_storage_bucket_object" "db_sample_data" {
   name   = "sample-db-data.sql"
   bucket = google_storage_bucket.sample_data.name
   source = "${path.module}/sample-db-data/sample-db-data.sql"
+
   depends_on = [
     google_storage_bucket.sample_data,
   ]
 }
 
-# Wait delay after enabling APIs
+# Wait delay after enabling SQL SA storage permissions
 resource "time_sleep" "wait_sql_sa_role" {
   depends_on      = [google_project_iam_member.sql_object_access]
   create_duration = "120s"
 }
 
-
-
-# Importing data from storage object to the SQL Database
+# Importing initial sample data from Cloud Storage to the SQL Database
 resource "null_resource" "upload_db_data" {
   triggers = {
-    project      = local.csa_project_id
-    network_name = "${var.vpc_network_name}"
+    project       = local.csa_project_id
+    instance_name = google_sql_database_instance.private_sql_instance.name
+    bucket_name   = google_storage_bucket.sample_data.name
+    file_name     = google_storage_bucket_object.db_sample_data.name
   }
 
   provisioner "local-exec" {
-    command     = <<EOT
-gcloud sql import sql ${google_sql_database_instance.private_sql_instance.name} gs://${google_storage_bucket.sample_data.name}/${google_storage_bucket_object.db_sample_data.name} --database=${google_sql_database.mydb.name} --project=${local.csa_project_id}
-    EOT
+    command     = "gcloud sql import sql ${self.triggers.instance_name} gs://${self.triggers.bucket_name}/${self.triggers.file_name} --database=${google_sql_database.mydb.name} --project=${self.triggers.project}"
     working_dir = path.module
   }
 
   depends_on = [
     time_sleep.wait_sql_sa_role,
+    google_sql_database.mydb,
   ]
 }
-
