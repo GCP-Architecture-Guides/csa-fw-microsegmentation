@@ -12,10 +12,10 @@
 ##  See the License for the specific language governing permissions and
 ##  limitations under the License.
 
-
 ##  This code creates demo environment for CSA Network Firewall microsegmentation  ##
 ##  This demo code is not built for production workload ##
 
 output "global_load_balancer_ip" {
-  value = "http://${google_compute_global_address.glb_pplapp_presentation_address.address}:80"
+  description = "Public HTTP URL of the presentation layer Global Load Balancer."
+  value       = "http://${google_compute_global_address.glb_pplapp_presentation_address.address}:80"
 }

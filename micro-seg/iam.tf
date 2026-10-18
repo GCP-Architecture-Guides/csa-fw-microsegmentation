@@ -22,7 +22,7 @@ resource "google_service_account" "primary_sa_pplapp_presentation" {
   project      = local.csa_project_id
   account_id   = "sa-pplapp-ppt-${var.primary_network_region}"
   display_name = "Compute service account"
-  depends_on = [time_sleep.wait_enable_service_api]
+  depends_on   = [time_sleep.wait_enable_service_api]
 }
 
 
@@ -31,7 +31,7 @@ resource "google_service_account" "primary_sa_pplapp_middleware" {
   project      = local.csa_project_id
   account_id   = "sa-pplapp-mdw-${var.primary_network_region}"
   display_name = "Compute service account to access MySQL pwd"
-  depends_on = [time_sleep.wait_enable_service_api]
+  depends_on   = [time_sleep.wait_enable_service_api]
 }
 
 
@@ -40,7 +40,7 @@ resource "google_service_account" "secondary_sa_pplapp_presentation" {
   project      = local.csa_project_id
   account_id   = "sa-pplapp-ppt-${var.secondary_network_region}"
   display_name = "Compute service account"
-  depends_on = [time_sleep.wait_enable_service_api]
+  depends_on   = [time_sleep.wait_enable_service_api]
 }
 
 #Create the service Account secondary  middleware
@@ -48,7 +48,7 @@ resource "google_service_account" "secondary_sa_pplapp_middleware" {
   project      = local.csa_project_id
   account_id   = "sa-pplapp-mdw-${var.secondary_network_region}"
   display_name = "Compute service account to access MySQL pwd"
-  depends_on = [time_sleep.wait_enable_service_api]
+  depends_on   = [time_sleep.wait_enable_service_api]
 }
 
 

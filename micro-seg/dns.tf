@@ -62,7 +62,7 @@ resource "google_dns_record_set" "pri_ilb_pplapp_middleware" {
   type         = "A"
   ttl          = 300
   project      = local.csa_project_id
-  rrdatas      = ["${google_compute_forwarding_rule.pri_ilb_pplapp_middleware_rule.ip_address}"]
+  rrdatas      = [google_compute_forwarding_rule.pri_ilb_pplapp_middleware_rule.ip_address]
   depends_on = [google_dns_managed_zone.private_zone,
     google_compute_forwarding_rule.pri_ilb_pplapp_middleware_rule,
   ]
@@ -75,7 +75,7 @@ resource "google_dns_record_set" "sec_ilb_pplapp_middleware" {
   type         = "A"
   ttl          = 300
   project      = local.csa_project_id
-  rrdatas      = ["${google_compute_forwarding_rule.sec_ilb_pplapp_middleware_rule.ip_address}"]
+  rrdatas      = [google_compute_forwarding_rule.sec_ilb_pplapp_middleware_rule.ip_address]
   depends_on = [google_dns_managed_zone.private_zone,
     google_compute_forwarding_rule.sec_ilb_pplapp_middleware_rule,
   ]
@@ -90,7 +90,7 @@ resource "google_dns_record_set" "sec_ilb_pplapp_sqldb_microseg" {
   type         = "A"
   ttl          = 300
   project      = local.csa_project_id
-  rrdatas      = ["${google_sql_database_instance.private_sql_instance.ip_address.0.ip_address}"]
+  rrdatas      = [google_sql_database_instance.private_sql_instance.ip_address[0].ip_address]
   depends_on = [
     google_dns_managed_zone.private_zone,
     google_sql_database_instance.private_sql_instance,

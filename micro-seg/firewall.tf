@@ -201,7 +201,7 @@ resource "google_compute_network_firewall_policy_rule" "pri_allow_http_lb_proxy"
   enable_logging  = true
   firewall_policy = google_compute_network_firewall_policy.primary.name
   priority        = 14000
-  rule_name       = "allow-iap"
+  rule_name       = "allow-http-lb-proxy-pri"
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
   target_secure_tags {
     name = "tagValues/${google_tags_tag_value.pri_mdwl_value.name}"
@@ -239,7 +239,7 @@ resource "google_compute_network_firewall_policy_rule" "sec_allow_http_lb_proxy"
   enable_logging  = true
   firewall_policy = google_compute_network_firewall_policy.primary.name
   priority        = 14100
-  rule_name       = "allow-iap"
+  rule_name       = "allow-http-lb-proxy-sec"
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
 
   target_secure_tags {
@@ -516,13 +516,13 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6" {
 resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv4" {
   project         = local.csa_project_id
   action          = "deny"
-  description     = "deny-ingress-ipv4"
+  description     = "deny-egress-ipv4"
   direction       = "EGRESS"
   disabled        = false
   enable_logging  = true
   firewall_policy = google_compute_network_firewall_policy.primary.name
   priority        = 2000000010
-  rule_name       = "deny-ingress-ipv4"
+  rule_name       = "deny-egress-ipv4"
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
 
   match {
@@ -543,13 +543,13 @@ resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv4" {
 resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv6" {
   project         = local.csa_project_id
   action          = "deny"
-  description     = "deny-ingress-ipv6"
+  description     = "deny-egress-ipv6"
   direction       = "EGRESS"
   disabled        = false
   enable_logging  = true
   firewall_policy = google_compute_network_firewall_policy.primary.name
   priority        = 2000000011
-  rule_name       = "deny-ingress-ipv6"
+  rule_name       = "deny-egress-ipv6"
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
 
   match {
@@ -579,7 +579,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv4_quaran
   enable_logging  = true
   firewall_policy = google_compute_network_firewall_policy.primary.name
   priority        = 5000
-  rule_name       = "deny-ingress-ipv4"
+  rule_name       = "deny-ingress-ipv4-quarantine"
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
   target_secure_tags {
     name = "tagValues/${google_tags_tag_value.quart_tag_value.name}"
@@ -609,7 +609,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6_quaran
   enable_logging  = true
   firewall_policy = google_compute_network_firewall_policy.primary.name
   priority        = 5001
-  rule_name       = "deny-ingress-ipv6"
+  rule_name       = "deny-ingress-ipv6-quarantine"
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
   target_secure_tags {
     name = "tagValues/${google_tags_tag_value.quart_tag_value.name}"
@@ -634,13 +634,13 @@ resource "google_compute_network_firewall_policy_rule" "deny_ingress_ipv6_quaran
 resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv4_quarantine" {
   project         = local.csa_project_id
   action          = "deny"
-  description     = "deny-ingress-ipv4-quarantine"
+  description     = "deny-egress-ipv4-quarantine"
   direction       = "EGRESS"
   disabled        = false
   enable_logging  = true
   firewall_policy = google_compute_network_firewall_policy.primary.name
   priority        = 5010
-  rule_name       = "deny-ingress-ipv4"
+  rule_name       = "deny-egress-ipv4-quarantine"
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
   target_secure_tags {
     name = "tagValues/${google_tags_tag_value.quart_tag_value.name}"
@@ -666,13 +666,13 @@ resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv4_quarant
 resource "google_compute_network_firewall_policy_rule" "deny_egress_ipv6_quarantine" {
   project         = local.csa_project_id
   action          = "deny"
-  description     = "deny-ingress-ipv6-quarantine"
+  description     = "deny-egress-ipv6-quarantine"
   direction       = "EGRESS"
   disabled        = false
   enable_logging  = true
   firewall_policy = google_compute_network_firewall_policy.primary.name
   priority        = 5011
-  rule_name       = "deny-ingress-ipv6"
+  rule_name       = "deny-egress-ipv6-quarantine"
   #  target_service_accounts = ["emailAddress:my@service-account.com"]
   target_secure_tags {
     name = "tagValues/${google_tags_tag_value.quart_tag_value.name}"

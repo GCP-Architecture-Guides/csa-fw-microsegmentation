@@ -85,7 +85,7 @@ resource "google_network_security_address_group" "pplapp_middleware_ilb_grp" {
   description = "Internal Load Balancers for Middleware service"
   type        = "IPV4"
   capacity    = "2"
-  items       = ["${var.primary_ilb_ip}", "${var.secondary_ilb_ip}"]
+  items       = [var.primary_ilb_ip, var.secondary_ilb_ip]
   depends_on = [
     time_sleep.wait_enable_service_api,
   ]
@@ -100,7 +100,7 @@ resource "google_network_security_address_group" "primary_proxy_sub" {
   description = "Primary location proxy subnet"
   type        = "IPV4"
   capacity    = "1"
-  items       = ["${var.primary_sub_proxy}"]
+  items       = [var.primary_sub_proxy]
   depends_on = [
     time_sleep.wait_enable_service_api,
   ]
@@ -115,7 +115,7 @@ resource "google_network_security_address_group" "secondary_proxy_sub" {
   description = "Secondary location proxy subnet"
   type        = "IPV4"
   capacity    = "1"
-  items       = ["${var.secondary_sub_proxy}"]
+  items       = [var.secondary_sub_proxy]
   depends_on = [
     time_sleep.wait_enable_service_api,
   ]
@@ -129,7 +129,7 @@ resource "google_network_security_address_group" "pplapp_sqldb" {
   description = "SQL Database IP"
   type        = "IPV4"
   capacity    = "1"
-  items       = ["${google_sql_database_instance.private_sql_instance.ip_address.0.ip_address}"]
+  items       = [google_sql_database_instance.private_sql_instance.ip_address[0].ip_address]
   depends_on = [
     google_sql_database_instance.private_sql_instance,
   ]

@@ -12,10 +12,8 @@
 ##  See the License for the specific language governing permissions and
 ##  limitations under the License.
 
-
-##  This code creates demo environment for CSA Network Firewall microsegmentation ##
+##  This code creates demo environment for CSA Network Firewall microsegmentation  ##
 ##  This demo code is not built for production workload ##
-
 
 module "micro_seg" {
   source                            = "./micro-seg"
@@ -40,6 +38,5 @@ module "micro_seg" {
   secondary_middleware_subnetwork   = var.secondary_middleware_subnetwork
   secondary_sub_proxy               = var.secondary_sub_proxy
   secondary_ilb_ip                  = var.secondary_ilb_ip
-  skip_delete                       = var.skip_delete
+  deletion_policy                   = var.deletion_policy
 }
-
